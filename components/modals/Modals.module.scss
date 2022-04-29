@@ -1,7 +1,6 @@
 @use '../../styles/variables' as *;
 
 .modalWrapper {
-  max-width: 540.5px;
   width: 100%;
   z-index: 2;
   max-height: 100%;
@@ -17,6 +16,7 @@
 
 .modalContent {
   position: relative;
+  width: 100%;
 }
 
 .backDrop {
