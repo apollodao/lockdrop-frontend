@@ -17,6 +17,7 @@ interface ApLocalNetworkConfig {
   /** Graphql server URL */
   mantle: string;
   stats: string;
+  backend: string;
   /** Contracts */
   shuttle: Record<ShuttleNetwork, string>;
   /** Fixed fee */
