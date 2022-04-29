@@ -5,9 +5,10 @@ import styles from './Modals.module.scss';
 type Props = {
   isOpen: boolean;
   onClose: () => void;
+  width?: number;
 };
 
-const MuiModal: FC<Props> = ({ isOpen, onClose, children }) => {
+const MuiModal: FC<Props> = ({ isOpen, onClose, width = 540.5, children }) => {
   return (
     <Modal
       BackdropProps={{
@@ -17,7 +18,7 @@ const MuiModal: FC<Props> = ({ isOpen, onClose, children }) => {
       }}
       open={isOpen}
       onClose={onClose}>
-      <Box className={styles.modalWrapper}>
+      <Box maxWidth={width} className={styles.modalWrapper}>
         <Box className={styles.modalContent}>{children}</Box>
       </Box>
     </Modal>

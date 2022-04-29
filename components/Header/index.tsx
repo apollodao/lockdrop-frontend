@@ -77,18 +77,16 @@ const Header: React.FC = () => {
         <DrawerOverlay />
         <DrawerContent>
           <Flex
+            className="bg-main"
+            opacity={0.8}
             height="100%"
-            bg="brand.purple"
             zIndex="100"
             px={['6', null, '12']}
             py="8"
             direction="column">
             <Flex justify="space-between" width="100%" align="center">
               <Box flexShrink={0}>
-                <Image
-                  src="/logo-astroport.svg"
-                  alt="Astroport. The future of trading."
-                />
+                <Image src="/logo-apollo.svg" alt="Apollo DAO" />
               </Box>
               <Button variant="icon" mr="-2" onClick={onClose}>
                 <CloseIcon color="white" width="1.5rem" height="1.5rem" />
@@ -96,11 +94,12 @@ const Header: React.FC = () => {
             </Flex>
             <Box mt="20">
               <VStack spacing="4" align="flex-start" textTransform="uppercase">
+                <p className="color-secondary">xASTRO Lockdrop</p>
                 <Link href="/" color="white">
-                  Information
+                  <h5>Information</h5>
                 </Link>
                 <Link href="/active-phase" color="white">
-                  Lockdrop
+                  <h5>Lockdrop</h5>
                 </Link>
               </VStack>
             </Box>

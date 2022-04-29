@@ -17,6 +17,7 @@ import Button from './Button';
 import xAstroIcon from './icons/xAstroIcon';
 import ApolloFormattedStatistic from './ApolloFormattedStatistic';
 import LockAstroModal from 'components/modals/LockAstroModal';
+import LockSuccessModal from 'components/modals/LockSuccessModal';
 
 type Props = {
   icon: any;
@@ -33,6 +34,7 @@ const MyxAstroTableRow: FC<Props> = ({
 }: Props) => {
   // todo
   const [openLockModal, setOpenLockModal] = useState(false);
+  const [openLockSuccessModal, setOpenLockSuccessModal] = useState(false);
   const handleLockxAstro = () => {
     setOpenLockModal(true);
   };
@@ -65,6 +67,12 @@ const MyxAstroTableRow: FC<Props> = ({
         <LockAstroModal
           isOpen={openLockModal}
           onClose={() => setOpenLockModal(false)}
+        />
+      )}
+      {openLockSuccessModal && (
+        <LockSuccessModal
+          isOpen={openLockSuccessModal}
+          onClose={() => setOpenLockSuccessModal(false)}
         />
       )}
       <Grid item md container direction="row" justifyContent="flex-start">
