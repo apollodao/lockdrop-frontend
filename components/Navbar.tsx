@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React, { FC } from 'react';
 import {
   Container,
   Flex,
@@ -11,15 +11,15 @@ import {
   useDisclosure,
   VStack,
   Box,
-  Link,
-} from "@chakra-ui/react";
+  Link
+} from '@chakra-ui/react';
 
-import NextLink from "next/link";
+import NextLink from 'next/link';
 
-import TerraWallet from "components/TerraWallet";
-import NavbarLink from "components/NavbarLink";
-import BurgerIcon from "components/icons/BurgerIcon";
-import CloseIcon from "components/icons/CloseIcon";
+import TerraWallet from 'components/TerraWallet';
+import NavbarLink from 'components/NavbarLink';
+import BurgerIcon from 'components/icons/BurgerIcon';
+import CloseIcon from 'components/icons/CloseIcon';
 
 const Navbar: FC = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -28,11 +28,10 @@ const Navbar: FC = () => {
   return (
     <Container
       maxW="container.xl"
-      px={["6", null, "12"]}
+      px={['6', null, '12']}
       pt="8"
       position="relative"
-      centerContent
-    >
+      centerContent>
       <Flex w="100%" justify="space-between" align="center">
         <Box flexShrink={0}>
           <NextLink href="/" passHref>
@@ -41,7 +40,7 @@ const Navbar: FC = () => {
             </a>
           </NextLink>
         </Box>
-        <Box display={["none", null, null, "block"]} flex="1">
+        <Box display={['none', null, null, 'block']} flex="1">
           <HStack flex="1" px="16" spacing="12">
             <NavbarLink text="Launch Plan" href="/" />
             {/* <NavbarLink text="Phase 1" href="/phase-1" /> */}
@@ -50,7 +49,7 @@ const Navbar: FC = () => {
         </Box>
         <HStack spacing="5" justify="flex-end">
           <TerraWallet />
-          <Box display={[null, null, null, "none"]}>
+          <Box display={[null, null, null, 'none']}>
             <Button variant="icon" ref={btnRef} onClick={onOpen} pr="0" mr="-2">
               <BurgerIcon color="white" width="1.5rem" height="1.5rem" />
             </Button>
@@ -62,24 +61,19 @@ const Navbar: FC = () => {
         placement="left"
         size="sm"
         onClose={onClose}
-        finalFocusRef={btnRef}
-      >
+        finalFocusRef={btnRef}>
         <DrawerOverlay />
         <DrawerContent>
           <Flex
             height="100%"
             bg="brand.purple"
             zIndex="100"
-            px={["6", null, "12"]}
+            px={['6', null, '12']}
             py="8"
-            direction="column"
-          >
+            direction="column">
             <Flex justify="space-between" width="100%" align="center">
               <Box flexShrink={0}>
-                <Image
-                  src="/logo-astroport.svg"
-                  alt="Astroport. The future of trading."
-                />
+                <Image src="/apollo.svg" alt="Apollo DAO." />
               </Box>
               <Button variant="icon" mr="-2" onClick={onClose}>
                 <CloseIcon color="white" width="1.5rem" height="1.5rem" />
@@ -109,8 +103,7 @@ const Navbar: FC = () => {
                   textTransform="uppercase"
                   color="white"
                   opacity="0.7"
-                  isExternal
-                >
+                  isExternal>
                   Terms of use
                 </Link>
                 {/* <Link
