@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect, useState } from 'react';
 import ApolloCardHeader from './ApolloCardHeader';
 import ApolloCardBody from './ApolloCardBody';
 import ExternalLinkIcon from './icons/ExternalLinkIcon';
@@ -14,10 +14,13 @@ import {
 import Typography from '@mui/material/Typography';
 import Image from 'next/image';
 import Button from './Button';
-import xAstroIcon from './icons/xAstroIcon';
 import ApolloFormattedStatistic from './ApolloFormattedStatistic';
 import LockAstroModal from 'components/modals/LockAstroModal';
 import LockSuccessModal from 'components/modals/LockSuccessModal';
+import { useLockdrop } from 'hooks/useLockdrop';
+import { addressState } from '../data/wallet';
+import { useWallet } from '@terra-money/wallet-provider';
+import { useRecoilValue } from 'recoil';
 
 type Props = {
   icon: any;
@@ -38,6 +41,21 @@ const MyxAstroTableRow: FC<Props> = ({
   const handleLockxAstro = () => {
     setOpenLockModal(true);
   };
+
+  const userWalletAddr: any = useRecoilValue(addressState);
+  const { queryWalletxAstroBalance } = useLockdrop(name);
+  const [xAstroBalance, setxAstroBalance] = useState(0);
+
+  console.log('userWalletAddr', userWalletAddr);
+  useEffect(() => {
+    (async () => {
+      if (userWalletAddr) {
+        console.log('getting balance');
+        const balance = await queryWalletxAstroBalance(userWalletAddr);
+        console.log('xAstroBalance', balance);
+      }
+    })();
+  }, []);
 
   return (
     <Grid

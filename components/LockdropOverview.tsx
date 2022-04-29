@@ -30,6 +30,7 @@ const useStyles: any = makeStyles((theme: Theme) => ({
 }));
 
 const LockdropOverview: FC<Props> = ({}) => {
+  
   const classes = useStyles();
   const userWalletAddr = useRecoilValue(addressState);
 
