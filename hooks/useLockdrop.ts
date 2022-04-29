@@ -48,6 +48,8 @@ import useFee from './useFee';
 
 
 
+// todo - move this to the right place
+
 // MAINNET
 // astroToken: 'terra1xj49zyqrwpv5k928jwfpfy2ha668nwdgkwlrg3',
 // xAstroToken: 'terra14lpnyzc9z4g3ugr4lhm8s4nle0tq8vcltkhzh7',
@@ -99,8 +101,8 @@ export const useLockdrop = (contractAddress: AccAddress) => {
     return lcdClient.wasm.contractQuery<T>(contractAddress, queryMsg);
   }
 
-  const queryWalletxAstroBalance = async (userWalletAddress: AccAddress): Promise<TxResult> => {
-    return lcdClient.wasm.contractQuery(astroTokenContractAddress, { balance: { address: userWalletAddress } });
+  const queryWalletxAstroBalance: any = async (userWalletAddress: AccAddress): Promise<TxResult> => {
+    return lcdClient.wasm.contractQuery(xAstroTokenContractAddress, { balance: { address: userWalletAddress } });
   };
 
   // prepare execution

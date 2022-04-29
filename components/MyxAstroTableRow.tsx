@@ -50,9 +50,12 @@ const MyxAstroTableRow: FC<Props> = ({
   useEffect(() => {
     (async () => {
       if (userWalletAddr) {
-        console.log('getting balance');
-        const balance = await queryWalletxAstroBalance(userWalletAddr);
-        console.log('xAstroBalance', balance);
+        try {
+          const { balance } = await queryWalletxAstroBalance(userWalletAddr);
+          setxAstroBalance(balance / 1000000);
+        } catch (e) {
+          console.error(e);
+        }
       }
     })();
   }, []);
@@ -114,7 +117,7 @@ const MyxAstroTableRow: FC<Props> = ({
       </Grid>
       <Grid item md>
         <ApolloFormattedStatistic
-          value={inWallet}
+          value={xAstroBalance}
           decimals={2}
           decimalsInGrey={true}
         />
