@@ -1,6 +1,6 @@
 @keyframes pulsate {
   from {
-    transform: scale(1);
+    transform: scale(1.03);
   }
   to {
     transform: scale(0.97);

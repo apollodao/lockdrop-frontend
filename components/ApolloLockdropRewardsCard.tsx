@@ -81,9 +81,8 @@ const ApolloLockdropRewardsCard = ({ amount = 100000 }) => {
             container
             direction="row"
             justifyContent="center"
-            spacing={2}
-            alignItems="flexEnd">
-            <Grid item>
+            alignItems="center">
+            <Grid item sx={{ mr: 1, pt: 1 }}>
               <Image
                 src={apolloIcon}
                 width={30}
@@ -102,7 +101,7 @@ const ApolloLockdropRewardsCard = ({ amount = 100000 }) => {
         </Box>
         <Box
           style={{
-            animation: 'pulsate 3s ease-in-out infinite alternate'
+            animation: 'pulsate 2000ms ease-in-out infinite alternate'
           }}
           className={classes.gradientBackground}
         />

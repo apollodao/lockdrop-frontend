@@ -12,7 +12,7 @@ import Card from 'components/Card';
 import LockdropPageHeader from 'components/LockdropPageHeader';
 import LockdropOverview from 'components/LockdropOverview';
 import MyxAstroTable from 'components/MyxAstroTable';
-import MyLockdropDeposits from 'components/MyLockdropDeposits';
+import MyLockdropDepositsTable from 'components/MyLockdropDepositsTable';
 import Stack from '@mui/material/Stack';
 import { white60 } from '../../theme/mui-theme';
 import Box from '@mui/material/Box';
@@ -30,7 +30,7 @@ const Phase2 = () => {
         <LockdropPageHeader />
         <LockdropOverview />
         <MyxAstroTable />
-        <MyLockdropDeposits />
+        <MyLockdropDepositsTable />
       </Stack>
     </Container>
   );

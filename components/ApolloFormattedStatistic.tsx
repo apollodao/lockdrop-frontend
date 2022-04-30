@@ -39,7 +39,7 @@ const ApolloFormattedStatistic: FC<Props> = ({
   return (
     <div className={classes.standard}>
       <span style={{ fontSize: fontSize, marginRight: '8px' }}>
-        {value.toLocaleString('en-US')}
+        {Math.trunc(value).toLocaleString('en-US')}
         {decimals > 0 && (
           <span className={decimalsInGrey ? `${classes.lighter}` : ''}>
             {'.' + value.toFixed(decimals).toString().split('.')[1]}
