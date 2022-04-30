@@ -31,15 +31,15 @@ export const networks: { [k in SupportedNetwork]: LocalNetworkConfig } = {
   mainnet: {
     contracts: {
       apolloLockdrop: '',
-      xastro_token: 'terra14lpnyzc9z4g3ugr4lhm8s4nle0tq8vcltkhzh7',
+      xastro_token: 'terra14lpnyzc9z4g3ugr4lhm8s4nle0tq8vcltkhzh7'
     },
     fee: { gasPrice: 0.15, amount: 100000 }, // 0.1 UST
     stats: 'https://graphql.apollo.farm/graphql',
-    apollo_fcd: 'https://price-api-mainnet.apollo.farm/v1',
+    apollo_fcd: 'https://price-api-mainnet.apollo.farm/v1'
   },
   testnet: {
     contracts: {
-      apolloLockdrop: 'terra125x6zd3hnlsncwnel2emrcww5hc8rm5dnjuspk',
+      apolloLockdrop: 'terra1sft9p4h9n0mggawzw77jplwlvrr6upav6s4y40',
       xastro_token: 'terra1yufp7cv85qrxrx56ulpfgstt2gxz905fgmysq0'
     },
     stats: 'https://graphql.apollo.farm/graphql',
