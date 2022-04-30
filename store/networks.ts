@@ -37,7 +37,7 @@ export const networks: { [k in SupportedNetwork]: LocalNetworkConfig } = {
   },
   testnet: {
     contracts: {
-      apolloLockdrop: 'terra125x6zd3hnlsncwnel2emrcww5hc8rm5dnjuspk'
+      apolloLockdrop: 'terra1sft9p4h9n0mggawzw77jplwlvrr6upav6s4y40'
     },
     stats: 'https://graphql.apollo.farm/graphql',
     fee: { gasPrice: 0.15, amount: 150000 }, // 0.15 UST
