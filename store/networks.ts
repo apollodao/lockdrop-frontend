@@ -19,6 +19,7 @@ export type LocalNetworkConfig = {
   /** Contract Addresses */
   contracts: {
     apolloLockdrop: AccAddress;
+    xastro_token: AccAddress;
   };
   /** Fixed fee */
   fee: { gasPrice: number; amount: number };
@@ -29,15 +30,17 @@ export type LocalNetworkConfig = {
 export const networks: { [k in SupportedNetwork]: LocalNetworkConfig } = {
   mainnet: {
     contracts: {
-      apolloLockdrop: ''
+      apolloLockdrop: '',
+      xastro_token: 'terra14lpnyzc9z4g3ugr4lhm8s4nle0tq8vcltkhzh7',
     },
     fee: { gasPrice: 0.15, amount: 100000 }, // 0.1 UST
     stats: 'https://graphql.apollo.farm/graphql',
-    apollo_fcd: 'https://price-api-mainnet.apollo.farm/v1'
+    apollo_fcd: 'https://price-api-mainnet.apollo.farm/v1',
   },
   testnet: {
     contracts: {
-      apolloLockdrop: 'terra125x6zd3hnlsncwnel2emrcww5hc8rm5dnjuspk'
+      apolloLockdrop: 'terra125x6zd3hnlsncwnel2emrcww5hc8rm5dnjuspk',
+      xastro_token: 'terra1yufp7cv85qrxrx56ulpfgstt2gxz905fgmysq0'
     },
     stats: 'https://graphql.apollo.farm/graphql',
     fee: { gasPrice: 0.15, amount: 150000 }, // 0.15 UST
@@ -45,7 +48,8 @@ export const networks: { [k in SupportedNetwork]: LocalNetworkConfig } = {
   },
   localterra: {
     contracts: {
-      apolloLockdrop: ''
+      apolloLockdrop: '',
+      xastro_token: ''
     },
     stats: '',
     fee: { gasPrice: 0.15, amount: 150000 }, // 0.15 UST
