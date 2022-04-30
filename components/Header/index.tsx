@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTheme, useMediaQuery } from '@mui/material';
 import {
   Flex,
   HStack,
@@ -33,6 +34,9 @@ const Header: React.FC = () => {
 
   const router = useRouter();
 
+  const { breakpoints } = useTheme();
+  const isMobile = useMediaQuery(breakpoints.down('sm'));
+
   const { isOpen, onOpen, onClose } = useDisclosure();
   const btnRef = React.useRef();
 
@@ -59,14 +63,13 @@ const Header: React.FC = () => {
         </Box>
       </Box>
       <HStack spacing="5" justify="flex-end">
-        <Box display={['none', 'none', 'block', 'block']}>
-          <TerraWallet />
-        </Box>
-        <Box display={[null, null, null, 'none']}>
+        {isMobile ? (
           <Button variant="icon" ref={btnRef} onClick={onOpen} pr="0" mr="-2">
             <BurgerIcon color="white" width="1.5rem" height="1.5rem" />
           </Button>
-        </Box>
+        ) : (
+          <TerraWallet />
+        )}
       </HStack>
       <Drawer
         isOpen={isOpen}
