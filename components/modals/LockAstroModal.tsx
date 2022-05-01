@@ -26,6 +26,8 @@ const LockAstroModal: FC<Props> = ({ isOpen, onClose }) => {
   const [depositTotal, setDepositTotal] = useState(0);
   const [xAstroBalance, setxAstroBalance] = useState(0);
 
+  const lockDisabled = lockAmount <= 0 || lockPeriod <= 0;
+
   const { breakpoints } = useTheme();
   const isMobile = useMediaQuery(breakpoints.down('sm'));
 
@@ -222,7 +224,7 @@ const LockAstroModal: FC<Props> = ({ isOpen, onClose }) => {
                   }}
                 />
                 <Box ml="6px">
-                  <h5 className="color-secondary">MONTHS</h5>
+                  <h5 className="color-secondary">WEEKS</h5>
                 </Box>
               </Box>
               <Box textAlign="right">
@@ -235,8 +237,10 @@ const LockAstroModal: FC<Props> = ({ isOpen, onClose }) => {
           <StyledSlider
             value={Number(lockPeriod)}
             setValue={(val) => setLockPeriod(val)}
-            maxValue={12}
-            pointValues={['0 Months', '6 Months', '12 Months']}
+            maxValue={52}
+            step={13}
+            symbol="Weeks"
+            // pointValues={['0 Months', '6 Months', '12 Months']}
           />
         </Box>
       </Box>
@@ -268,10 +272,11 @@ const LockAstroModal: FC<Props> = ({ isOpen, onClose }) => {
           height={45}
           fontSize={13}
           fontFamily="Obviously, sans-serif"
-          backgroundColor={gold}
+          backgroundColor={lockDisabled ? buttonGrey : gold}
           color={almostBlack}
           backgroundHoverColor={buttonGrey}
           hoverColor={white95}
+          disabled={lockDisabled}
           onClick={handleLockxAstro}>
           Lock xASTRO
         </Button>

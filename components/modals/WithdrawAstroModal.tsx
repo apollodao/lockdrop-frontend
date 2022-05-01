@@ -16,6 +16,9 @@ const WithdrawAstroModal: FC<Props> = ({ isOpen, onClose }) => {
   const [withdrawAmount, setWithdrawAmount] = useState('');
   const { breakpoints } = useTheme();
   const isMobile = useMediaQuery(breakpoints.down('sm'));
+
+  const withdrawDisabled = Number(withdrawAmount) <= 0;
+
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <Box className="panel">
@@ -84,7 +87,7 @@ const WithdrawAstroModal: FC<Props> = ({ isOpen, onClose }) => {
               <Box display="flex" alignItems="center" justifyContent="flex-end">
                 <h2 className="color-primary">3</h2>
                 <Box ml="6px">
-                  <h5 className="color-secondary">MONTHS</h5>
+                  <h5 className="color-secondary">WEEKS</h5>
                 </Box>
               </Box>
               <Box textAlign="right">
@@ -122,7 +125,8 @@ const WithdrawAstroModal: FC<Props> = ({ isOpen, onClose }) => {
           height={45}
           fontSize={13}
           fontFamily="Obviously, sans-serif"
-          backgroundColor={gold}
+          backgroundColor={withdrawDisabled ? buttonGrey : gold}
+          disabled={withdrawDisabled}
           color={almostBlack}
           backgroundHoverColor={buttonGrey}
           hoverColor={white95}>
