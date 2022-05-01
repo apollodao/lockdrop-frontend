@@ -30,7 +30,6 @@ const useStyles: any = makeStyles((theme: Theme) => ({
 }));
 
 const LockdropOverview: FC<Props> = ({}) => {
-  
   const classes = useStyles();
   const userWalletAddr = useRecoilValue(addressState);
 
@@ -40,7 +39,7 @@ const LockdropOverview: FC<Props> = ({}) => {
       titleFontVariant="body2"
       padding={0}
       linkText="Learn More"
-      linkUrl="https://articles.apollo.farm/the-apollo-xastro-lockdrop/" // todo: link to lockdrop page
+      linkUrl="https://articles.apollo.farm/the-apollo-xastro-lockdrop/"
       style={{ width: '100%' }}>
       <Grid container p={5} justifyContent="center" alignItems="center">
         <Grid item md={4} xs={12} textAlign="center" justifyContent="center">

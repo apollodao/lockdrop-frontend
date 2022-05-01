@@ -1,7 +1,7 @@
 import React from 'react';
 import dayjs from 'dayjs';
 import { Box } from '@chakra-ui/react';
-import { Grid, useMediaQuery, useTheme } from '@mui/material';
+import { Grid, Typography, useMediaQuery, useTheme } from '@mui/material';
 
 import { useAstroApp } from 'modules/common';
 
@@ -9,58 +9,59 @@ import DateNumber from 'components/DateNumber';
 import CardHeader from 'components/CardHeader';
 import Card from 'components/Card';
 import ApolloStageIndicator from './ApolloStageIndicator';
+import { white95 } from 'theme/mui-theme';
+import { useLockdrop } from 'hooks/useLockdrop';
 
 const LaunchTimelineIntro = () => {
-  const { phase1StartDate, phase2StartDate } = useAstroApp();
-  const endDate = phase1StartDate?.add(14, 'day');
-  const startPhase1Date = phase1StartDate?.format('MMM/DD/YY');
-  const startPhase2Date = phase2StartDate?.format('MMM/DD/YY');
-  const formattedEndDate = endDate?.format('MMM/DD/YY');
+  // const { phase1StartDate, phase2StartDate } = useAstroApp();
+  // const endDate = phase1StartDate?.add(14, 'day');
 
   const { breakpoints } = useTheme();
   const isMobile = useMediaQuery(breakpoints.down('md'));
 
-  function checkToday(index) {
-    const today = dayjs.utc().tz('Europe/London');
-    return endDate?.subtract(index, 'days').isSame(today, 'day');
-  }
+  // function checkToday(index) {
+  //   const today = dayjs.utc().tz('Europe/London');
+  //   return endDate?.subtract(index, 'days').isSame(today, 'day');
+  // }
 
-  function printDate(phaseNumber, start, end) {
-    const phase = [];
+  // function printDate(phaseNumber, start, end) {
+  //   const phase = [];
 
-    for (let index = start; index > end; index--) {
-      let isToday = checkToday(index);
-      if (phaseNumber == 1 && index < 10) {
-        phase.push(
-          <DateNumber
-            day={index}
-            bg="brand.purple"
-            color="white"
-            isToday={isToday}
-          />
-        );
-      } else if (phaseNumber == 2 && index < 3) {
-        phase.push(<DateNumber day={index} bg="#83FFCB" isToday={isToday} />);
-      } else {
-        phase.push(<DateNumber day={index} isToday={isToday} />);
-      }
-    }
-    return phase;
-  }
+  //   for (let index = start; index > end; index--) {
+  //     let isToday = checkToday(index);
+  //     if (phaseNumber == 1 && index < 10) {
+  //       phase.push(
+  //         <DateNumber
+  //           day={index}
+  //           bg="brand.purple"
+  //           color="white"
+  //           isToday={isToday}
+  //         />
+  //       );
+  //     } else if (phaseNumber == 2 && index < 3) {
+  //       phase.push(<DateNumber day={index} bg="#83FFCB" isToday={isToday} />);
+  //     } else {
+  //       phase.push(<DateNumber day={index} isToday={isToday} />);
+  //     }
+  //   }
+  //   return phase;
+  // }
 
-  const phase1 = printDate(1, 14, 7);
-  const phase2 = printDate(2, 7, 0);
+  // const phase1 = printDate(1, 14, 7);
+  // const phase2 = printDate(2, 7, 0);
 
   return (
     <Box className="panel">
-      <Box p="15px">
-        <h6 className="color-secondary">Information</h6>
+      <Box p="24px">
+        <Typography variant="body2" color={white95} component="div">
+          <strong>Information</strong>
+        </Typography>
       </Box>
 
       <Box h="1px" className="border" />
       <Grid container>
         <Grid item xs={12} sm={12} md={6}>
-          <Box flex="2" p="15px">
+          <Box flex="2" p="24px">
             <p className="color-primary weight-600">Apollo Lockdrop</p>
             <p className="color-secondary">
               We recently released{' '}
@@ -133,11 +134,8 @@ const LaunchTimelineIntro = () => {
         </Grid>
         <Grid item container xs={12} sm={12} md={6}>
           {!isMobile && <Box w="1px" className="border" />}
-          <Box flex="2" p="15px">
+          <Box flex="2" p="24px">
             <Box display="flex" alignItems="center">
-              <Box mr="8px">
-                <caption className="color-primary">DAYS</caption>
-              </Box>
               <ApolloStageIndicator />
             </Box>
             <Box mt="16px">

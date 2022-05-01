@@ -48,7 +48,11 @@ import axios from 'axios';
 // 2.'Deposit 1000000 Astro for 26 weeks with Wallet 1'
 //
 
+// the official start date and time in utc
+const LOCKDROP_START_DATE = Date.UTC(2022, 4, 2, 0, 0, 0);
+
 export const useLockdrop = (contractAddress?: AccAddress) => {
+
   let networkName = useRecoilValue(networkNameState);
   if (!networkName || !isSupportedNetwork(networkName)) {
     networkName = 'mainnet';
@@ -65,6 +69,42 @@ export const useLockdrop = (contractAddress?: AccAddress) => {
   const fee = useFee();
   const userWalletAddr = useRecoilValue(addressState);
   const lcdClient = useRecoilValue(lcdClientQuery);
+
+  // implement logic to provide helpers for phase start and end dates
+  const buildLockdropDateConfig: any = () => {
+    const startDate = new Date(LOCKDROP_START_DATE);
+    const currentDate = new Date();
+    const config = {
+      startDate: startDate,
+      endDate: null,
+      currentStage: 'pre',
+      phases: [
+        {
+          title: 'stage1',
+          startDate: startDate,
+          duration: 5,
+        },
+        {
+          title: 'stage2',
+          startDate: new Date(startDate.getTime() + (5 * 24 * 60 * 60 * 1000)),
+          duration: 2,
+        }
+      ]
+    };
+    config.endDate = new Date(config.startDate.getTime() + config.phases.reduce((acc, phase) => acc + phase.duration, 0) * 24 * 60 * 60 * 1000);
+
+    // current stage logic
+    config.phases.map((phase: any) => {
+      if (currentDate.getTime() > phase.startDate.getTime()) {
+        config.currentStage = phase.title;
+      }
+    });
+    if (currentDate.getTime() > config.endDate.getTime()) {
+      config.currentStage = 'post';
+    }
+
+    return config;
+  };
 
   // prepare execution
   const createExecuteMsg = (executeMsg: any, coins?: Coins.Input) => {
@@ -94,15 +134,15 @@ export const useLockdrop = (contractAddress?: AccAddress) => {
         msg: createHookMsg(
           deposit_token === 'xastro'
             ? {
-                increase_lockup: {
-                  duration
-                }
+              increase_lockup: {
+                duration
               }
+            }
             : {
-                stake_astro_and_increase_lockup: {
-                  duration
-                }
+              stake_astro_and_increase_lockup: {
+                duration
               }
+            }
         )
       }
     };
@@ -181,10 +221,11 @@ export const useLockdrop = (contractAddress?: AccAddress) => {
   };
 
   return {
+    lockdropConfig: buildLockdropDateConfig(),
     executeDepositAsset,
     queryWalletxAstroBalance,
     queryUserLockdropInfo,
     queryTotalLockdropInfo,
-    queryPrices
+    queryPrices,
   };
 };

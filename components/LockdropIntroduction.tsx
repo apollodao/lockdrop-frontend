@@ -1,7 +1,9 @@
 import React from 'react';
-import { Box, Grid, useTheme, useMediaQuery } from '@mui/material';
+import { Box, Grid, useTheme, useMediaQuery, Typography } from '@mui/material';
 import { Image } from '@chakra-ui/react';
 import ApolloCountdown from './ApolloCountdown';
+import { white95 } from 'theme/mui-theme';
+import ApolloDAOTextLogo from './icons/ApolloDAOTextLogo';
 
 const LockdropIntroduction = () => {
   const { breakpoints } = useTheme();
@@ -20,13 +22,18 @@ const LockdropIntroduction = () => {
             display="flex"
             justifyContent={isMobile ? 'center' : 'flex-start'}
             mb={1}>
-            <Image
-              src="/apolloDAO_logo.png"
-              height={30}
-              alt="Apollo DAO Logo"
-            />
+            <ApolloDAOTextLogo />
           </Box>
-          <h1 className="color-primary obviouslyFont">xASTRO Lockdrop</h1>
+          <Typography
+            sx={{
+              fontFamily: 'Obviously, sans-serif',
+              fontSize: '30px',
+              lineHeight: '37px',
+              fontWeight: '500',
+              color: white95
+            }}>
+            xASTRO Lockdrop
+          </Typography>
         </Grid>
         <Grid
           item
@@ -35,9 +42,6 @@ const LockdropIntroduction = () => {
           xs={12}
           sm={6}>
           <Box textAlign="center">
-            <Box mb={1}>
-              <h6 className="color-primary obviouslyFont">BEGINS IN</h6>
-            </Box>
             <ApolloCountdown />
           </Box>
         </Grid>

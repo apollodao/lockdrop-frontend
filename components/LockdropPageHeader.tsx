@@ -1,21 +1,5 @@
 import React, { FC, ReactNode } from 'react';
-import {
-  Box,
-  HStack,
-  Link,
-  Stack,
-  Flex,
-  Spacer,
-  VStack,
-  Icon,
-  FlexProps
-} from '@chakra-ui/react';
-import CardHeader from './CardHeader';
-import Card from './Card';
-import ApolloCardBody from './ApolloCardBody';
-import ApolloCardHeader from './ApolloCardHeader';
-import ExternalLinkIcon from 'components/icons/ExternalLinkIcon';
-import { white95, white60 } from '../theme/mui-theme';
+import { white95, white60, almostBlack } from '../theme/mui-theme';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
 import ApolloCountdown from './ApolloCountdown';
@@ -37,13 +21,10 @@ const LockdropPageHeader: FC<Props> = ({}) => {
         </Typography>
       </Grid>
       <Grid item lg={4} md={4} xs={4} textAlign="center">
-        <Typography variant="subtitle1" color="textPrimary" sx={{ mb: 1 }}>
-          TIME LEFT IN THIS STAGE
-        </Typography>
         <ApolloCountdown />
       </Grid>
       <Grid item lg={4} md={4} xs={4}>
-        <ApolloStageIndicator />
+        <ApolloStageIndicator borderColor={almostBlack} />
       </Grid>
     </Grid>
   );
