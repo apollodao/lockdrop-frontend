@@ -6,13 +6,13 @@ import { Theme } from '@mui/material/styles';
 import { orangeGoldGradientHorz } from '../theme/mui-theme';
 import Stack from '@mui/material/Stack';
 import Grid from '@mui/material/Grid';
+import { useLockdrop } from 'hooks/useLockdrop';
+import Box from '@mui/material/Box';
 
 type Props = {
   children?: ReactNode;
   isRight?: boolean;
 };
-
-const COUNTDOWN_DATE = new Date('2022-05-02T00:00:00.000Z');
 
 const useStyles: any = makeStyles((theme: Theme) => ({
   countdownText: {
@@ -38,39 +38,71 @@ const useStyles: any = makeStyles((theme: Theme) => ({
 
 const ApolloCountdown: FC<Props> = ({}) => {
   const classes = useStyles();
+  const { lockdropConfig } = useLockdrop();
+
+  console.log('stageIndicator', lockdropConfig.currentStage);
+
+  let countdownDate = lockdropConfig.startDate;
+  let countdownTitle = 'LOCKDROP BEGINS IN';
+  switch (lockdropConfig.currentStage) {
+    default:
+      break;
+    case 'stage1':
+      countdownDate = lockdropConfig.phases[1].startDate;
+      countdownTitle = 'STAGE 2 BEGINS IN';
+      break;
+    case 'stage2':
+      countdownDate = lockdropConfig.endDate;
+      countdownTitle = 'STAGE 2 ENDS IN';
+      break;
+    case 'post':
+      countdownDate = lockdropConfig.endDate;
+      countdownTitle = 'LOCKDROP HAS ENDED';
+      break;
+  }
+
   return (
-    <Countdown
-      date={COUNTDOWN_DATE}
-      renderer={(props) => (
-        <Grid
-          container
-          direction="row"
-          justifyContent="center"
-          alignItems="bottom"
-          spacing={0.5}
-          className={classes.countdownText}>
-          <Grid item>
-            <div>{props.days.toString().padStart(2, '0')}</div>
-            <div className={classes.countdownLabel}>DAYS</div>
+    <>
+      <Box mb={1}>
+        <h6
+          title={lockdropConfig.stage}
+          className="color-primary obviouslyFont">
+          {countdownTitle}
+        </h6>
+      </Box>
+      <Countdown
+        date={countdownDate}
+        renderer={(props) => (
+          <Grid
+            container
+            direction="row"
+            justifyContent="center"
+            alignItems="bottom"
+            spacing={0.5}
+            className={classes.countdownText}>
+            <Grid item>
+              <div>{props.days.toString().padStart(2, '0')}</div>
+              <div className={classes.countdownLabel}>DAYS</div>
+            </Grid>
+            <Grid item>:</Grid>
+            <Grid item>
+              <div>{props.hours.toString().padStart(2, '0')}</div>
+              <div className={classes.countdownLabel}>HOURS</div>
+            </Grid>
+            <Grid item>:</Grid>
+            <Grid item>
+              <div>{props.minutes.toString().padStart(2, '0')}</div>
+              <div className={classes.countdownLabel}>MINUTES</div>
+            </Grid>
+            <Grid item>:</Grid>
+            <Grid item>
+              <div>{props.seconds.toString().padStart(2, '0')}</div>
+              <div className={classes.countdownLabel}>SECONDS</div>
+            </Grid>
           </Grid>
-          <Grid item>:</Grid>
-          <Grid item>
-            <div>{props.hours.toString().padStart(2, '0')}</div>
-            <div className={classes.countdownLabel}>HOURS</div>
-          </Grid>
-          <Grid item>:</Grid>
-          <Grid item>
-            <div>{props.minutes.toString().padStart(2, '0')}</div>
-            <div className={classes.countdownLabel}>MINUTES</div>
-          </Grid>
-          <Grid item>:</Grid>
-          <Grid item>
-            <div>{props.seconds.toString().padStart(2, '0')}</div>
-            <div className={classes.countdownLabel}>SECONDS</div>
-          </Grid>
-        </Grid>
-      )}
-    />
+        )}
+      />
+    </>
   );
 };
 

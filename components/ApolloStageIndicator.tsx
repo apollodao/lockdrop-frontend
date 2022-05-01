@@ -1,45 +1,44 @@
 import React, { FC, ReactNode } from 'react';
-import { Box, BoxProps } from '@chakra-ui/react';
 import Typography from '@mui/material/Typography';
-import Countdown from 'react-countdown';
 import { makeStyles } from '@mui/styles';
 import { Theme } from '@mui/material/styles';
 import {
   almostBlack,
   white60,
   gold50,
-  orangeGoldGradientHorz,
   peach,
   peach50,
-  gold
+  gold,
+  darkGrey
 } from '../theme/mui-theme';
-import Stack from '@mui/material/Stack';
 import Grid from '@mui/material/Grid';
-import TableContainer from '@mui/material/TableContainer';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow
-} from '@mui/material';
+import { useLockdrop } from 'hooks/useLockdrop';
 
 type Props = {
+  borderColor?: string;
   children?: ReactNode;
   isRight?: boolean;
-} & BoxProps;
-
-const COUNTDOWN_DATE = new Date('2022-05-02T00:00:00.000Z');
-const END_DATE = new Date(
-  COUNTDOWN_DATE.getTime() + 1000 * 60 * 60 * 24 * 7 - 1000
-); // 11:59:59
+};
 
 const useStyles: any = makeStyles((theme: Theme) => ({
   countdownText: {}
 }));
 
-const ApolloStageIndicator: FC<Props> = ({}) => {
+const ApolloStageIndicator: FC<Props> = ({ borderColor = darkGrey }) => {
   const classes = useStyles();
+
+  const { lockdropConfig } = useLockdrop();
+  const currentDate = new Date();
+
+  const isToday = (i) => {
+    return (
+      currentDate.getTime() >
+        lockdropConfig.startDate.getTime() + i * 24 * 60 * 60 * 1000 &&
+      currentDate.getTime() <
+        lockdropConfig.startDate.getTime() + (i + 1) * 24 * 60 * 60 * 1000
+    );
+  };
+
   return (
     <Grid container direction="column">
       <Grid
@@ -86,8 +85,7 @@ const ApolloStageIndicator: FC<Props> = ({}) => {
         sx={{ padding: '0' }}
         spacing={0}>
         {new Array(7).fill(0).map((_, i) => {
-          // todo - add dynamic logic
-          if (i === 2) {
+          if (isToday(i)) {
             return (
               <Grid
                 item
@@ -97,9 +95,10 @@ const ApolloStageIndicator: FC<Props> = ({}) => {
                 textAlign={'center'}
                 sx={{
                   background: 'white',
+                  fontWeight: 'bold',
                   border: '2px solid',
                   padding: '3px 0',
-                  borderColor: almostBlack
+                  borderColor: borderColor
                 }}>
                 <Typography
                   variant="body2"
@@ -119,9 +118,10 @@ const ApolloStageIndicator: FC<Props> = ({}) => {
                 textAlign={'center'}
                 sx={{
                   background: gold50,
+                  fontWeight: 'bold',
                   border: '2px solid',
                   padding: '3px 0',
-                  borderColor: almostBlack
+                  borderColor: borderColor
                 }}>
                 <Typography
                   variant="body2"
@@ -141,9 +141,10 @@ const ApolloStageIndicator: FC<Props> = ({}) => {
                 textAlign={'center'}
                 sx={{
                   background: peach50,
+                  fontWeight: 'bold',
                   border: '2px solid',
                   padding: '3px 0',
-                  borderColor: almostBlack
+                  borderColor: borderColor
                 }}>
                 <Typography
                   variant="body2"
@@ -167,7 +168,7 @@ const ApolloStageIndicator: FC<Props> = ({}) => {
             variant="body2"
             color={white60}
             sx={{ fontSize: '12px', lineHeight: '16px' }}>
-            {new Date(COUNTDOWN_DATE).toLocaleDateString('en-US', {
+            {new Date(lockdropConfig.startDate).toLocaleDateString('en-US', {
               year: 'numeric',
               month: 'short',
               day: 'numeric',
@@ -185,11 +186,10 @@ const ApolloStageIndicator: FC<Props> = ({}) => {
             variant="body2"
             color={white60}
             sx={{ fontSize: '12px', lineHeight: '16px' }}>
-            {new Date(END_DATE).toLocaleDateString('en-US', {
+            {new Date(lockdropConfig.endDate).toLocaleDateString('en-US', {
               year: 'numeric',
               month: 'short',
-              day: 'numeric',
-              timeZone: 'UTC'
+              day: 'numeric'
             })}
           </Typography>
         </Grid>

@@ -34,7 +34,7 @@ const LockdropOverview: FC<Props> = ({}) => {
       titleFontVariant="body2"
       padding={0}
       linkText="Learn More"
-      linkUrl="https://articles.apollo.farm/the-apollo-xastro-lockdrop/" // todo: link to lockdrop page
+      linkUrl="https://articles.apollo.farm/the-apollo-xastro-lockdrop/"
       style={{ width: '100%' }}>
       <Grid
         container

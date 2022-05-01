@@ -1,6 +1,5 @@
-import React, { FC } from 'react';
-import { useTheme, useMediaQuery } from '@mui/material';
-import { white60 } from '../theme/mui-theme';
+import React, { FC, ReactNode } from 'react';
+import { white95, white60, almostBlack } from '../theme/mui-theme';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
 import ApolloCountdown from './ApolloCountdown';
@@ -30,14 +29,11 @@ const LockdropPageHeader: FC<Props> = ({}) => {
           able to withdraw xASTRO.
         </Typography>
       </Grid>
-      <Grid item lg={4} md={4} xs={12} sm={12} textAlign="center">
-        <Typography variant="subtitle1" color="textPrimary" sx={{ mb: 1 }}>
-          TIME LEFT IN THIS STAGE
-        </Typography>
+      <Grid item lg={4} md={4} xs={4} textAlign="center">
         <ApolloCountdown />
       </Grid>
-      <Grid item lg={4} md={4} xs={12} sm={12}>
-        <ApolloStageIndicator />
+      <Grid item lg={4} md={4} xs={4}>
+        <ApolloStageIndicator borderColor={almostBlack} />
       </Grid>
     </Grid>
   );

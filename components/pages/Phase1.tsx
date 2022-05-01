@@ -1,10 +1,10 @@
-import React from "react";
-import { VStack } from "@chakra-ui/react";
+import React from 'react';
+import { VStack } from '@chakra-ui/react';
 
-import LaunchTimeline from "components/LaunchTimeline";
-import Phase1Lockdrop from "components/Phase1Lockdrop";
-import MyLockedAstroLiquidity from "components/MyLockedAstroLiquidity";
-import MyTerraswapPools from "components/MyTerraswapPools";
+import LaunchTimeline from 'components/LaunchTimeline';
+import Phase1Lockdrop from 'components/Phase1Lockdrop';
+import MyLockedAstroLiquidity from 'components/MyLockedAstroLiquidity';
+import MyTerraswapPools from 'components/MyTerraswapPools';
 
 const Phase1 = () => {
   return (
