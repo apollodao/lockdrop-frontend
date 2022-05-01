@@ -1,4 +1,4 @@
-import React, { FC, ReactNode } from 'react';
+import React, { FC, useCallback, useState, useEffect } from 'react';
 import { useTheme, useMediaQuery, Grid } from '@mui/material';
 import WidgetContainer from './WidgetContainer';
 import { white60 } from '../theme/mui-theme';
@@ -9,6 +9,7 @@ import { Theme } from '@mui/material/styles';
 import ApolloFormattedStatistic from './ApolloFormattedStatistic';
 import { addressState } from '../data/wallet';
 import { useRecoilValue } from 'recoil';
+import { useLockdrop } from 'hooks/useLockdrop';
 
 type Props = {};
 
@@ -24,9 +25,69 @@ const useStyles: any = makeStyles((theme: Theme) => ({
 
 const LockdropOverview: FC<Props> = ({}) => {
   const classes = useStyles();
+  // user wallet address
   const userWalletAddr = useRecoilValue(addressState);
   const { breakpoints } = useTheme();
   const isMobile = useMediaQuery(breakpoints.down('md'));
+
+  // component state
+  const totalRewards = 5000000000000;
+  const [totalDeposits, setTotalDeposits] = useState(0); // total amount of xastro deposits
+  const [totalUserDeposits, setTotalUserDeposits] = useState(0); // total amount of xastro deposits by user
+  const [totalUserRewards, setTotalUserRewards] = useState(0); // total amount of xastro rewards by user
+  const [totalUserRewardsPercent, setTotalUserRewardsPercent] = useState(0); // total amount of xastro rewards by user
+
+  // contract interaction methods
+  const {
+    executeDepositAsset,
+    queryWalletxAstroBalance,
+    queryUserLockdropInfo,
+    queryTotalLockdropInfo,
+    queryPrices
+  } = useLockdrop();
+
+  // fetch and set lockdrop totals
+  const getLockdropTotal = useCallback(async () => {
+    try {
+      const { total_amount_in_lockups } = await queryTotalLockdropInfo();
+      setTotalDeposits(total_amount_in_lockups);
+    } catch (e) {
+      console.error(e);
+    }
+  }, []);
+
+  // fetch and set user lockdrop totals
+  const getUserLockdropTotal = useCallback(async () => {
+    try {
+      const { total_apollo_rewards, lockup_infos } =
+        await queryUserLockdropInfo(userWalletAddr);
+      const userDeposits = lockup_infos.reduce(
+        (acc, curr) => acc + parseInt(curr.units_locked),
+        0
+      );
+      setTotalUserDeposits(userDeposits);
+      setTotalUserRewards(total_apollo_rewards);
+      setTotalUserRewardsPercent(total_apollo_rewards / totalRewards);
+    } catch (e) {
+      console.error(e);
+    }
+  }, []);
+
+  // initial state regardless of connection
+  useEffect(() => {
+    (async () => {
+      getLockdropTotal();
+    })();
+  }, [totalDeposits]);
+
+  // initial state if user is connected
+  useEffect(() => {
+    (async () => {
+      if (userWalletAddr && totalDeposits) {
+        getUserLockdropTotal();
+      }
+    })();
+  }, [userWalletAddr, totalDeposits]);
 
   return (
     <WidgetContainer
@@ -61,7 +122,7 @@ const LockdropOverview: FC<Props> = ({}) => {
               <ApolloLockdropStat
                 titleContent={
                   <ApolloFormattedStatistic
-                    value={1}
+                    value={totalUserRewardsPercent}
                     decimals={2}
                     percentage={true}
                     fontSize="26px"
@@ -74,7 +135,7 @@ const LockdropOverview: FC<Props> = ({}) => {
           </Grid>
         </Grid>
         <Grid item md={4} xs={12} textAlign="center" alignItems="center">
-          <ApolloLockdropRewardsCard amount={userWalletAddr ? 100000 : 0} />
+          <ApolloLockdropRewardsCard amount={totalUserRewards / 1000000} />
         </Grid>
         <Grid item md={4} xs={12} textAlign="right">
           <Grid container direction="column" spacing={4}>
@@ -82,7 +143,7 @@ const LockdropOverview: FC<Props> = ({}) => {
               <ApolloLockdropStat
                 titleContent={
                   <ApolloFormattedStatistic
-                    value={2000000}
+                    value={totalDeposits / 1000000}
                     decimals={2}
                     decimalsInGrey={true}
                     postFix={'xASTRO'}
@@ -97,7 +158,7 @@ const LockdropOverview: FC<Props> = ({}) => {
               <ApolloLockdropStat
                 titleContent={
                   <ApolloFormattedStatistic
-                    value={20000}
+                    value={totalUserDeposits / 1000000}
                     decimals={2}
                     decimalsInGrey={true}
                     postFix={'xASTRO'}

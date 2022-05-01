@@ -26,7 +26,7 @@ const LockdropPageHeader: FC<Props> = ({}) => {
         </Typography>
         <Typography variant="body1" color={white60}>
           During Stage 1 (Day 1-5) there are no limits on deposits and
-          withdrawals of xASTRO. Once Stage 2 (Day 6) begins yo uwill only be
+          withdrawals of xASTRO. Once Stage 2 (Day 6) begins you will only be
           able to withdraw xASTRO.
         </Typography>
       </Grid>

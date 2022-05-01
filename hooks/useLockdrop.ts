@@ -52,7 +52,6 @@ import axios from 'axios';
 const LOCKDROP_START_DATE = Date.UTC(2022, 4, 2, 0, 0, 0);
 
 export const useLockdrop = (contractAddress?: AccAddress) => {
-
   let networkName = useRecoilValue(networkNameState);
   if (!networkName || !isSupportedNetwork(networkName)) {
     networkName = 'mainnet';
@@ -82,16 +81,23 @@ export const useLockdrop = (contractAddress?: AccAddress) => {
         {
           title: 'stage1',
           startDate: startDate,
-          duration: 5,
+          duration: 5
         },
         {
           title: 'stage2',
-          startDate: new Date(startDate.getTime() + (5 * 24 * 60 * 60 * 1000)),
-          duration: 2,
+          startDate: new Date(startDate.getTime() + 5 * 24 * 60 * 60 * 1000),
+          duration: 2
         }
       ]
     };
-    config.endDate = new Date(config.startDate.getTime() + config.phases.reduce((acc, phase) => acc + phase.duration, 0) * 24 * 60 * 60 * 1000);
+    config.endDate = new Date(
+      config.startDate.getTime() +
+        config.phases.reduce((acc, phase) => acc + phase.duration, 0) *
+          24 *
+          60 *
+          60 *
+          1000
+    );
 
     // current stage logic
     config.phases.map((phase: any) => {
@@ -134,15 +140,15 @@ export const useLockdrop = (contractAddress?: AccAddress) => {
         msg: createHookMsg(
           deposit_token === 'xastro'
             ? {
-              increase_lockup: {
-                duration
+                increase_lockup: {
+                  duration
+                }
               }
-            }
             : {
-              stake_astro_and_increase_lockup: {
-                duration
+                stake_astro_and_increase_lockup: {
+                  duration
+                }
               }
-            }
         )
       }
     };
@@ -192,6 +198,7 @@ export const useLockdrop = (contractAddress?: AccAddress) => {
       const result = await axios.get(
         `https://api.apollo.farm/lockdrop/get_user_info/${userWalletAddress}/${networkName}`
       );
+
       return result.data;
     } catch (e) {
       console.error(e);
@@ -226,6 +233,6 @@ export const useLockdrop = (contractAddress?: AccAddress) => {
     queryWalletxAstroBalance,
     queryUserLockdropInfo,
     queryTotalLockdropInfo,
-    queryPrices,
+    queryPrices
   };
 };

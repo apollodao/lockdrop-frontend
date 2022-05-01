@@ -83,7 +83,7 @@ const LockAstroModal: FC<Props> = ({ isOpen, onClose }) => {
       const result = await executeDepositAsset(
         'xastro',
         lockAmount * 1000000,
-        Math.round(lockPeriod * 4.33)
+        lockPeriod
       );
       // todo - set loading state
     } catch (e) {

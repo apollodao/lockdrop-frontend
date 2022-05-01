@@ -92,7 +92,7 @@ const ApolloLockdropRewardsCard = ({ amount = 100000 }) => {
             </Grid>
             <Grid item>
               <ApolloFormattedStatistic
-                value={100000}
+                value={amount}
                 decimals={2}
                 fontSize="26px"
               />
