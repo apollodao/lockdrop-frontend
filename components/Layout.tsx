@@ -61,8 +61,8 @@ const Layout: FC = ({ children }) => {
           <AstroAppProvider data={whitelist}>
             <RecoilRoot>
               <RecoilInit />
-              <Header />
               <ThemeProvider theme={theme}>
+                <Header />
                 <Container>{children}</Container>
               </ThemeProvider>
             </RecoilRoot>

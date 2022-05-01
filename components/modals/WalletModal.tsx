@@ -1,5 +1,5 @@
-import React, { FC } from "react";
-import { useWallet, ConnectType } from "@terra-money/wallet-provider";
+import React, { FC } from 'react';
+import { useWallet, ConnectType } from '@terra-money/wallet-provider';
 import {
   Modal,
   ModalOverlay,
@@ -10,11 +10,11 @@ import {
   ModalBody,
   ModalCloseButton,
   Heading,
-  chakra,
-} from "@chakra-ui/react";
+  chakra
+} from '@chakra-ui/react';
 
-import TerraExtensionIcon from "components/icons/TerraExtensionIcon";
-import TerraMobileIcon from "components/icons/TerraMobileIcon";
+import TerraExtensionIcon from 'components/icons/TerraExtensionIcon';
+import TerraMobileIcon from 'components/icons/TerraMobileIcon';
 
 type Props = {
   isOpen: boolean;
@@ -34,8 +34,7 @@ const WalletModal: FC<Props> = ({ isOpen, onClose }) => {
             direction="column"
             justify="center"
             align="center"
-            textAlign="center"
-          >
+            textAlign="center">
             <Heading size="md" mb="6">
               Connect to a wallet
             </Heading>
@@ -47,14 +46,13 @@ const WalletModal: FC<Props> = ({ isOpen, onClose }) => {
               width="100%"
               mb="4"
               _hover={{
-                bg: "white",
-                color: "brand.dark",
+                bg: 'white',
+                color: 'brand.dark'
               }}
               onClick={() => {
                 onClose();
                 connect(ConnectType.EXTENSION);
-              }}
-            >
+              }}>
               <HStack justify="space-between">
                 <Text>Terra Station Extension</Text>
                 <TerraExtensionIcon />
@@ -67,14 +65,13 @@ const WalletModal: FC<Props> = ({ isOpen, onClose }) => {
               bg="brand.purple"
               width="100%"
               _hover={{
-                bg: "white",
-                color: "brand.dark",
+                bg: 'white',
+                color: 'brand.dark'
               }}
               onClick={() => {
                 onClose();
                 connect(ConnectType.WALLETCONNECT);
-              }}
-            >
+              }}>
               <HStack justify="space-between">
                 <Text>Terra Station Mobile</Text>
                 <TerraMobileIcon width="1.5rem" height="1.5rem" />

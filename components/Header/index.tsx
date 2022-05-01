@@ -1,12 +1,10 @@
 import React from 'react';
+import { useTheme, useMediaQuery, Drawer } from '@mui/material';
 import {
   Flex,
   HStack,
   Image,
   Button,
-  Drawer,
-  DrawerOverlay,
-  DrawerContent,
   useDisclosure,
   VStack,
   Box,
@@ -32,6 +30,9 @@ const Header: React.FC = () => {
   ];
 
   const router = useRouter();
+
+  const { breakpoints } = useTheme();
+  const isMobile = useMediaQuery(breakpoints.down('sm'));
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const btnRef = React.useRef();
@@ -59,65 +60,54 @@ const Header: React.FC = () => {
         </Box>
       </Box>
       <HStack spacing="5" justify="flex-end">
-        <Box display={['none', 'none', 'block', 'block']}>
-          <TerraWallet />
-        </Box>
-        <Box display={[null, null, null, 'none']}>
+        {isMobile ? (
           <Button variant="icon" ref={btnRef} onClick={onOpen} pr="0" mr="-2">
             <BurgerIcon color="white" width="1.5rem" height="1.5rem" />
           </Button>
-        </Box>
+        ) : (
+          <TerraWallet />
+        )}
       </HStack>
-      <Drawer
-        isOpen={isOpen}
-        placement="left"
-        size="sm"
-        onClose={onClose}
-        finalFocusRef={btnRef}>
-        <DrawerOverlay />
-        <DrawerContent>
-          <Flex
-            className="bg-main"
-            opacity={0.8}
-            height="100%"
-            zIndex="100"
-            px={['6', null, '12']}
-            py="8"
-            direction="column">
-            <Flex justify="space-between" width="100%" align="center">
-              <Box flexShrink={0}>
-                <Image src="/logo-apollo.svg" alt="Apollo DAO" />
-              </Box>
-              <Button variant="icon" mr="-2" onClick={onClose}>
-                <CloseIcon color="white" width="1.5rem" height="1.5rem" />
-              </Button>
-            </Flex>
-            <Box mt="20">
-              <VStack spacing="4" align="flex-start" textTransform="uppercase">
-                <p className="color-secondary">xASTRO Lockdrop</p>
-                <Link href="/" color="white">
-                  <h5>Information</h5>
-                </Link>
-                <Link href="/active-phase" color="white">
-                  <h5>Lockdrop</h5>
-                </Link>
-              </VStack>
+      <Drawer anchor="left" open={isOpen} onClose={onClose}>
+        <Flex
+          className="panel"
+          height="100%"
+          padding="16px"
+          direction="column"
+          style={{ width: isMobile ? '100vw' : 500 }}>
+          <Flex justify="space-between" width="100%" align="center">
+            <Box flexShrink={0}>
+              <Image src="/logo-apollo.svg" alt="Apollo DAO" />
             </Box>
-            <VStack spacing="10" align="flex-start" mt="auto">
-              <TerraWallet />
-              <HStack spacing="12" align="flex-start" display="none">
-                <Link
-                  href="https://astroport.fi/terms-and-conditions"
-                  textTransform="uppercase"
-                  color="white"
-                  opacity="0.7"
-                  isExternal>
-                  Terms of use
-                </Link>
-              </HStack>
-            </VStack>
+            <Button variant="icon" mr="-2" onClick={onClose}>
+              <CloseIcon color="white" width="1.5rem" height="1.5rem" />
+            </Button>
           </Flex>
-        </DrawerContent>
+          <Box mt="20">
+            <VStack spacing="4" align="flex-start" textTransform="uppercase">
+              <p className="color-secondary">xASTRO Lockdrop</p>
+              <Link href="/" color="white">
+                <h5>Information</h5>
+              </Link>
+              <Link href="/active-phase" color="white">
+                <h5>Lockdrop</h5>
+              </Link>
+            </VStack>
+          </Box>
+          <VStack spacing="10" align="flex-start" mt="auto">
+            <TerraWallet />
+            <HStack spacing="12" align="flex-start" display="none">
+              <Link
+                href="https://astroport.fi/terms-and-conditions"
+                textTransform="uppercase"
+                color="white"
+                opacity="0.7"
+                isExternal>
+                Terms of use
+              </Link>
+            </HStack>
+          </VStack>
+        </Flex>
       </Drawer>
     </Box>
   );
