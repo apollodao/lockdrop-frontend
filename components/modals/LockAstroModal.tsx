@@ -122,13 +122,15 @@ const LockAstroModal: FC<Props> = ({ isOpen, onClose }) => {
   // todo - check the math here
   const apolloRewardsAmount = useCallback(() => {
     let multiplier = 1;
-    if (lockPeriod >= 6) {
-      multiplier = 2.4;
-    } else if (lockPeriod >= 9) {
-      multiplier = 4.2;
-    } else if (lockPeriod >= 12) {
+
+    if (lockPeriod >= 52) {
       multiplier = 6.9;
+    } else if (lockPeriod >= 39) {
+      multiplier = 4.2;
+    } else if (lockPeriod >= 26) {
+      multiplier = 2.4;
     }
+
     let rewards = lockAmount * multiplier;
 
     return rewards.toFixed(2);

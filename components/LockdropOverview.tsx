@@ -38,13 +38,7 @@ const LockdropOverview: FC<Props> = ({}) => {
   const [totalUserRewardsPercent, setTotalUserRewardsPercent] = useState(0); // total amount of xastro rewards by user
 
   // contract interaction methods
-  const {
-    executeDepositAsset,
-    queryWalletxAstroBalance,
-    queryUserLockdropInfo,
-    queryTotalLockdropInfo,
-    queryPrices
-  } = useLockdrop();
+  const { queryUserLockdropInfo, queryTotalLockdropInfo } = useLockdrop();
 
   // fetch and set lockdrop totals
   const getLockdropTotal = useCallback(async () => {

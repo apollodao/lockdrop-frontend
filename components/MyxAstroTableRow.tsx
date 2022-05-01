@@ -38,14 +38,15 @@ const MyxAstroTableRow: FC<Props> = ({
   // todo
   const [openLockModal, setOpenLockModal] = useState(false);
   const [openLockSuccessModal, setOpenLockSuccessModal] = useState(false);
+  const [xAstroBalance, setxAstroBalance] = useState(0);
+  const [lockdropBalance, setLockdropBalance] = useState(0);
+
   const handleLockxAstro = () => {
     setOpenLockModal(true);
   };
 
   const userWalletAddr: any = useRecoilValue(addressState);
   const { queryWalletxAstroBalance, queryUserLockdropInfo } = useLockdrop();
-  const [xAstroBalance, setxAstroBalance] = useState(0);
-  const [lockdropBalance, setLockdropBalance] = useState(0);
 
   const getUserxAstroBalance = useCallback(async () => {
     try {
@@ -58,12 +59,12 @@ const MyxAstroTableRow: FC<Props> = ({
 
   const getUserLockdropBalance = useCallback(async () => {
     try {
-      const userInfo = await queryUserLockdropInfo(userWalletAddr);
-      // todo - confirm correct property is .amount
-      const totalInLockdrop = userInfo.lockup_infos.reduce((info: any) => {
-        return info.amount;
-      }, 0);
-      setLockdropBalance(totalInLockdrop / 1000000);
+      const { lockup_infos } = await queryUserLockdropInfo(userWalletAddr);
+      const lockdropBalance = lockup_infos.reduce(
+        (acc, curr) => acc + parseInt(curr.units_locked),
+        0
+      );
+      setLockdropBalance(lockdropBalance);
     } catch (e) {
       console.error(e);
     }
@@ -128,7 +129,7 @@ const MyxAstroTableRow: FC<Props> = ({
       </Grid>
       <Grid item md>
         <ApolloFormattedStatistic
-          value={lockdropBalance}
+          value={lockdropBalance / 1000000}
           decimals={2}
           decimalsInGrey={true}
         />
