@@ -2,7 +2,9 @@ import {
   AccAddress,
   Coins,
   MsgExecuteContract,
-  Fee
+  Fee,
+  Int,
+  Numeric
 } from '@terra-money/terra.js';
 import { useRecoilValue } from 'recoil';
 import networks, {
@@ -14,6 +16,7 @@ import { TxResult, useWallet } from '@terra-money/wallet-provider';
 import { lcdClientQuery } from '../data/network';
 import { addressState } from '../data/wallet';
 import useFee from './useFee';
+import axios from 'axios';
 
 // an example hook for a contract.
 // e.g. cw3
@@ -45,84 +48,143 @@ import useFee from './useFee';
 // 2.'Deposit 1000000 Astro for 26 weeks with Wallet 1'
 //
 
-
-
-
-// todo - move this to the right place
-
-// MAINNET
-// astroToken: 'terra1xj49zyqrwpv5k928jwfpfy2ha668nwdgkwlrg3',
-// xAstroToken: 'terra14lpnyzc9z4g3ugr4lhm8s4nle0tq8vcltkhzh7',
-
-// TESTNET
-const astroTokenContractAddress = 'terra1jqcw39c42mf7ngq4drgggakk3ymljgd3r5c3r5';
-const xAstroTokenContractAddress = 'terra1yufp7cv85qrxrx56ulpfgstt2gxz905fgmysq0';
-
-export const useLockdrop = (contractAddress: AccAddress) => {
+export const useLockdrop = (contractAddress?: AccAddress) => {
   let networkName = useRecoilValue(networkNameState);
-  if (!networkName || !isSupportedNetwork(networkName)) { networkName = 'mainnet'; }
+  if (!networkName || !isSupportedNetwork(networkName)) {
+    networkName = 'mainnet';
+  }
 
   const lockdropAddress =
     networks[networkName as SupportedNetwork].contracts.apolloLockdrop;
+  const xastroTokenAddress =
+    networks[networkName as SupportedNetwork].contracts.xastro_token;
+  const astroTokenAddress =
+    networks[networkName as SupportedNetwork].contracts.astro_token;
 
   const { post } = useWallet();
-
   const fee = useFee();
-
   const userWalletAddr = useRecoilValue(addressState);
   const lcdClient = useRecoilValue(lcdClientQuery);
 
-  function executeExample(proposalId: number): Promise<TxResult> {
-    const executeMsg = createExecuteMsg({
-      execute: { proposalId }
-    });
-
-    return post({
-      msgs: [executeMsg],
-      fee: new Fee(fee.gas, { uusd: fee.amount })
-    });
-  }
-
-  function executeDepositAsset(amount: number, duration: number, lpToken: AccAddress): Promise<TxResult> {
-    const executeMsg = createExecuteMsg({
-      amount,
-      duration,
-      lpToken
-    });
-
-    return post({
-      msgs: [executeMsg],
-      fee: new Fee(fee.gas, { uusd: fee.amount })
-    });
-  }
-
-  // query
-  function query<T>(queryMsg: any) {
-    return lcdClient.wasm.contractQuery<T>(contractAddress, queryMsg);
-  }
-
-  const queryWalletxAstroBalance: any = async (userWalletAddress: AccAddress): Promise<TxResult> => {
-    return lcdClient.wasm.contractQuery(xAstroTokenContractAddress, { balance: { address: userWalletAddress } });
-  };
-
   // prepare execution
-  function createExecuteMsg(executeMsg: any, coins?: Coins.Input) {
+  const createExecuteMsg = (executeMsg: any, coins?: Coins.Input) => {
     return new MsgExecuteContract(
       userWalletAddr,
-      contractAddress,
+      lockdropAddress,
       executeMsg,
       coins
     );
+  };
+
+  // base64 encode
+  function createHookMsg(msg: any): string {
+    return Buffer.from(JSON.stringify(msg)).toString('base64');
   }
 
-  function queryExample(proposal_id: number) {
-    return query<any>({ proposal: { proposal_id } });
+  // astro/xastro deposit message
+  function createDepositMessage(
+    deposit_token: 'xastro' | 'astro',
+    duration: number,
+    amount: Numeric.Input
+  ): MsgExecuteContract {
+    const executeMsg = {
+      send: {
+        contract: lockdropAddress,
+        amount: new Int(amount).toString(),
+        msg: createHookMsg(
+          deposit_token === 'xastro'
+            ? {
+                increase_lockup: {
+                  duration
+                }
+              }
+            : {
+                stake_astro_and_increase_lockup: {
+                  duration
+                }
+              }
+        )
+      }
+    };
+
+    return new MsgExecuteContract(
+      userWalletAddr,
+      deposit_token === 'xastro' ? xastroTokenAddress : astroTokenAddress,
+      executeMsg
+    );
   }
+
+  // execute the deposit by 'sending' the xAstro token to the contract
+  const executeDepositAsset = (
+    deposit_token: 'xastro' | 'astro',
+    amount: number,
+    duration: number
+  ): Promise<TxResult> => {
+    const executeMsg = createDepositMessage(deposit_token, duration, amount);
+    return post({
+      msgs: [executeMsg],
+      fee: new Fee(fee.gas, { uusd: fee.amount })
+    });
+  };
+
+  // query
+  const query = <T>(queryMsg: any) => {
+    return lcdClient.wasm.contractQuery<T>(contractAddress, queryMsg);
+  };
+
+  // get xAstro token balance from the xAstro contract
+  const queryWalletxAstroBalance: any = async (
+    userWalletAddress: AccAddress
+  ): Promise<TxResult> => {
+    return lcdClient.wasm.contractQuery(xastroTokenAddress, {
+      balance: { address: userWalletAddress }
+    });
+  };
+
+  // get user's lockdrop info
+  const queryUserLockdropInfo: any = async (
+    userWalletAddress: AccAddress
+  ): Promise<TxResult> => {
+    try {
+      if (!userWalletAddress) {
+        return null;
+      }
+      const result = await axios.get(
+        `https://api.apollo.farm/lockdrop/get_user_info/${userWalletAddress}/${networkName}`
+      );
+      return result.data;
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  // get total lockdrop stats
+  const queryTotalLockdropInfo: any = async (): Promise<TxResult> => {
+    try {
+      const result = await axios.get(
+        `https://api.apollo.farm/lockdrop/info/${networkName}`
+      );
+      return result.data;
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  // get astro and x astro price
+  const queryPrices: any = async (): Promise<TxResult> => {
+    try {
+      const result = await axios.get(`https://api.apollo.farm/lockdrop/prices`);
+      return result.data;
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
   return {
     executeDepositAsset,
-    executeExample,
-    queryExample,
-    queryWalletxAstroBalance
+    queryWalletxAstroBalance,
+    queryUserLockdropInfo,
+    queryTotalLockdropInfo,
+    queryPrices
   };
 };

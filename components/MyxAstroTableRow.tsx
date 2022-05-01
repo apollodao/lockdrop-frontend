@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect, useState, useCallback } from 'react';
 import ApolloCardHeader from './ApolloCardHeader';
 import ApolloCardBody from './ApolloCardBody';
 import ExternalLinkIcon from './icons/ExternalLinkIcon';
@@ -43,22 +43,40 @@ const MyxAstroTableRow: FC<Props> = ({
   };
 
   const userWalletAddr: any = useRecoilValue(addressState);
-  const { queryWalletxAstroBalance } = useLockdrop(name);
+  const { queryWalletxAstroBalance, queryUserLockdropInfo } = useLockdrop();
   const [xAstroBalance, setxAstroBalance] = useState(0);
+  const [lockdropBalance, setLockdropBalance] = useState(0);
 
-  console.log('userWalletAddr', userWalletAddr);
+  const getUserxAstroBalance = useCallback(async () => {
+    try {
+      const { balance } = await queryWalletxAstroBalance(userWalletAddr);
+      setxAstroBalance(balance / 1000000);
+    } catch (e) {
+      console.error(e);
+    }
+  }, []);
+
+  const getUserLockdropBalance = useCallback(async () => {
+    try {
+      const userInfo = await queryUserLockdropInfo(userWalletAddr);
+      // todo - confirm correct property is .amount
+      const totalInLockdrop = userInfo.lockup_infos.reduce((info: any) => {
+        return info.amount;
+      }, 0);
+      setLockdropBalance(totalInLockdrop / 1000000);
+    } catch (e) {
+      console.error(e);
+    }
+  }, []);
+
   useEffect(() => {
     (async () => {
       if (userWalletAddr) {
-        try {
-          const { balance } = await queryWalletxAstroBalance(userWalletAddr);
-          setxAstroBalance(balance / 1000000);
-        } catch (e) {
-          console.error(e);
-        }
+        getUserxAstroBalance();
+        getUserLockdropBalance();
       }
     })();
-  }, []);
+  }, [userWalletAddr]);
 
   return (
     <Grid
@@ -110,7 +128,7 @@ const MyxAstroTableRow: FC<Props> = ({
       </Grid>
       <Grid item md>
         <ApolloFormattedStatistic
-          value={amount}
+          value={lockdropBalance}
           decimals={2}
           decimalsInGrey={true}
         />
@@ -137,3 +155,8 @@ const MyxAstroTableRow: FC<Props> = ({
 };
 
 export default MyxAstroTableRow;
+function queryUserLockdropInfo(
+  userWalletAddr: any
+): { balance: any } | PromiseLike<{ balance: any }> {
+  throw new Error('Function not implemented.');
+}
