@@ -11,6 +11,7 @@ interface StyledSliderProps {
   color?: string;
   maxString?: string;
   pointValues?: string[];
+  step?: number;
 }
 
 const StyledSlider: React.FC<StyledSliderProps> = ({
@@ -22,7 +23,8 @@ const StyledSlider: React.FC<StyledSliderProps> = ({
   markCount = 5,
   color = '#FED200',
   maxString,
-  pointValues
+  pointValues,
+  step
 }) => {
   const pointVals = pointValues ?? [
     minValue.toString(),
@@ -43,6 +45,7 @@ const StyledSlider: React.FC<StyledSliderProps> = ({
   return (
     <Box className="styledSlider">
       <Slider
+        step={step}
         sx={{ color }}
         components={{ Thumb: CustomSliderThumb }}
         min={minValue}
