@@ -8,9 +8,18 @@ import ApolloStageIndicator from './ApolloStageIndicator';
 type Props = {};
 
 const LockdropPageHeader: FC<Props> = ({}) => {
+  const { breakpoints } = useTheme();
+  const isMobile = useMediaQuery(breakpoints.down('md'));
+
   return (
-    <Grid container direction="row" spacing={0}>
-      <Grid item lg={4} md={4} xs={4}>
+    <Grid container direction="row" spacing={2}>
+      <Grid
+        item
+        lg={4}
+        md={4}
+        xs={12}
+        sm={12}
+        textAlign={isMobile ? 'center' : 'left'}>
         <Typography variant="subtitle1" sx={{ mb: '10px' }}>
           STAGE I
         </Typography>

@@ -44,13 +44,14 @@ const ApolloStageIndicator: FC<Props> = ({ borderColor = darkGrey }) => {
       <Grid
         item
         container
-        direction="row"
         columns={7}
         sx={{ padding: '3px 2px' }}
         textAlign="center">
         <Grid
           item
           md={5}
+          sm={5}
+          xs={5}
           sx={{
             borderBottom: '3px solid',
             borderBottomColor: gold,
@@ -63,6 +64,8 @@ const ApolloStageIndicator: FC<Props> = ({ borderColor = darkGrey }) => {
         <Grid
           item
           md={2}
+          sm={2}
+          xs={2}
           sx={{
             // border: '3px solid ' + almostBlack,
             borderBottom: '3px solid',

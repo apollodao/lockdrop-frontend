@@ -1,13 +1,6 @@
 import React, { FC, ReactNode } from 'react';
-import { Box, Flex, Link, Spacer, VStack } from '@chakra-ui/react';
-import ApolloCardHeader from './ApolloCardHeader';
-import ApolloCardBody from './ApolloCardBody';
-import ExternalLinkIcon from './icons/ExternalLinkIcon';
-import Container from '@mui/material/Container';
-import Grid from '@mui/material/Grid';
-import Typography from '@mui/material/Typography';
+import { useTheme, useMediaQuery, Grid } from '@mui/material';
 import WidgetContainer from './WidgetContainer';
-import Stack from '@mui/material/Stack';
 import { white60 } from '../theme/mui-theme';
 import ApolloLockdropStat from './ApolloLockdropStat';
 import ApolloLockdropRewardsCard from './ApolloLockdropRewardsCard';
@@ -32,6 +25,8 @@ const useStyles: any = makeStyles((theme: Theme) => ({
 const LockdropOverview: FC<Props> = ({}) => {
   const classes = useStyles();
   const userWalletAddr = useRecoilValue(addressState);
+  const { breakpoints } = useTheme();
+  const isMobile = useMediaQuery(breakpoints.down('md'));
 
   return (
     <WidgetContainer
@@ -41,7 +36,12 @@ const LockdropOverview: FC<Props> = ({}) => {
       linkText="Learn More"
       linkUrl="https://articles.apollo.farm/the-apollo-xastro-lockdrop/"
       style={{ width: '100%' }}>
-      <Grid container p={5} justifyContent="center" alignItems="center">
+      <Grid
+        container
+        p={5}
+        spacing={4}
+        justifyContent="center"
+        alignItems="center">
         <Grid item md={4} xs={12} textAlign="center" justifyContent="center">
           <Grid container direction="column" spacing={4}>
             <Grid item>
@@ -54,7 +54,7 @@ const LockdropOverview: FC<Props> = ({}) => {
                   />
                 }
                 subtitle={'Total Lockdrop Rewards'}
-                textAlign="left"
+                textAlign={isMobile ? 'center' : 'left'}
               />
             </Grid>
             <Grid item>
@@ -68,7 +68,7 @@ const LockdropOverview: FC<Props> = ({}) => {
                   />
                 }
                 subtitle={'My Est. % of Lockdrop Rewards'}
-                textAlign="left"
+                textAlign={isMobile ? 'center' : 'left'}
               />
             </Grid>
           </Grid>
@@ -90,7 +90,7 @@ const LockdropOverview: FC<Props> = ({}) => {
                   />
                 }
                 subtitle={'Total Deposits in Lockdrop'}
-                textAlign="right"
+                textAlign={isMobile ? 'center' : 'right'}
               />
             </Grid>
             <Grid item>
@@ -105,7 +105,7 @@ const LockdropOverview: FC<Props> = ({}) => {
                   />
                 }
                 subtitle={'My Total Deposits in Lockdrop'}
-                textAlign="right"
+                textAlign={isMobile ? 'center' : 'right'}
               />
             </Grid>
           </Grid>
