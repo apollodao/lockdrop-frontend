@@ -10,7 +10,11 @@ const LockdropIntroduction = () => {
   const isMobile = useMediaQuery(breakpoints.down('sm'));
   return (
     <Box>
-      <Box position="relative" borderRadius="15px" overflow="hidden">
+      <Box
+        position="relative"
+        zIndex={-1}
+        borderRadius="15px"
+        overflow="hidden">
         <Image src="/hero_image_background.png" alt="lockdrop background" />
         <Box position="absolute" bottom={0}>
           <Image src="/hero_image_characters.png" alt="lockdrop banner" />
