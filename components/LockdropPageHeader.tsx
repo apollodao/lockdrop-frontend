@@ -1,4 +1,5 @@
 import React, { FC, ReactNode } from 'react';
+import { useTheme, useMediaQuery } from '@mui/material';
 import { white95, white60, almostBlack } from '../theme/mui-theme';
 import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
