@@ -9,7 +9,7 @@ import DateNumber from 'components/DateNumber';
 import CardHeader from 'components/CardHeader';
 import Card from 'components/Card';
 import ApolloStageIndicator from './ApolloStageIndicator';
-import { white95 } from 'theme/mui-theme';
+import { white95 } from '../theme/mui-theme';
 import { useLockdrop } from 'hooks/useLockdrop';
 
 const LaunchTimelineIntro = () => {

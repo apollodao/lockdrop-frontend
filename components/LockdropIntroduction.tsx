@@ -2,7 +2,7 @@ import React from 'react';
 import { Box, Grid, useTheme, useMediaQuery, Typography } from '@mui/material';
 import { Image } from '@chakra-ui/react';
 import ApolloCountdown from './ApolloCountdown';
-import { white95 } from 'theme/mui-theme';
+import { white95 } from '../theme/mui-theme';
 import ApolloDAOTextLogo from './icons/ApolloDAOTextLogo';
 
 const LockdropIntroduction = () => {
