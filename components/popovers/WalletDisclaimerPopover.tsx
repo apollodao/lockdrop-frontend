@@ -1,4 +1,5 @@
 import React, { FC, useState } from 'react';
+import { useTheme, useMediaQuery } from '@mui/material';
 import {
   chakra,
   Box,
@@ -21,6 +22,8 @@ type Props = {
 
 const WalletDisclaimerPopover: FC<Props> = ({ onClick }) => {
   const [disclaimerChecked, setDisclaimerChecked] = useState(false);
+  const { breakpoints } = useTheme();
+  const isMobile = useMediaQuery(breakpoints.down('sm'));
 
   return (
     <WalletPopover
@@ -46,7 +49,14 @@ const WalletDisclaimerPopover: FC<Props> = ({ onClick }) => {
           </HStack>
         </chakra.button>
       )}>
-      <Box maxWidth="500px" p="12px" pt="20px" className="panel">
+      <Box
+        maxWidth={isMobile ? '100vw' : '500px'}
+        p="12px"
+        pt="20px"
+        className="panel">
+        <Box mb="16px" ml="8px">
+          <h3 className="color-primary">Disclaimer</h3>
+        </Box>
         <Box display="flex" alignItems="flex-start">
           <Box mt="-8px" mr="6px">
             <Checkbox
@@ -74,7 +84,7 @@ const WalletDisclaimerPopover: FC<Props> = ({ onClick }) => {
             fontFamily="Obviously, sans-serif"
             onClick={onClick}
             isDisabled={!disclaimerChecked}
-            backgroundColor={gold}
+            backgroundColor={!disclaimerChecked ? buttonGrey : gold}
             color={almostBlack}
             backgroundHoverColor={buttonGrey}
             hoverColor={white95}>

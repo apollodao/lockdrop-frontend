@@ -25,12 +25,10 @@ const ConnectWalletModal: FC<Props> = ({ isOpen, onClose }) => {
             transition="0.2s all"
             p="6"
             borderRadius="xl"
-            bg="brand.purple"
             color="white"
             width="100%"
             mb="4"
             _hover={{
-              bg: 'white',
               color: 'brand.dark'
             }}
             onClick={() => {
@@ -46,11 +44,9 @@ const ConnectWalletModal: FC<Props> = ({ isOpen, onClose }) => {
             transition="0.2s all"
             p="6"
             borderRadius="xl"
-            bg="brand.purple"
             color="white"
             width="100%"
             _hover={{
-              bg: 'white',
               color: 'brand.dark'
             }}
             onClick={() => {
