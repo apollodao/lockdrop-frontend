@@ -2,7 +2,9 @@ import {
   AccAddress,
   Coins,
   MsgExecuteContract,
-  Fee
+  Fee,
+  Int,
+  Numeric
 } from '@terra-money/terra.js';
 import { useRecoilValue } from 'recoil';
 import networks, {
@@ -48,12 +50,16 @@ import axios from 'axios';
 
 export const useLockdrop = (contractAddress?: AccAddress) => {
   let networkName = useRecoilValue(networkNameState);
-  if (!networkName || !isSupportedNetwork(networkName)) { networkName = 'mainnet'; }
+  if (!networkName || !isSupportedNetwork(networkName)) {
+    networkName = 'mainnet';
+  }
 
   const lockdropAddress =
     networks[networkName as SupportedNetwork].contracts.apolloLockdrop;
   const xastroTokenAddress =
     networks[networkName as SupportedNetwork].contracts.xastro_token;
+  const astroTokenAddress =
+    networks[networkName as SupportedNetwork].contracts.astro_token;
 
   const { post } = useWallet();
   const fee = useFee();
@@ -70,24 +76,75 @@ export const useLockdrop = (contractAddress?: AccAddress) => {
     );
   };
 
-  const executeExample = (proposalId: number): Promise<TxResult> => {
-    const executeMsg = createExecuteMsg({
-      execute: { proposalId }
-    });
+  // base64 encode
+  function createHookMsg(msg: any): string {
+    return Buffer.from(JSON.stringify(msg)).toString('base64');
+  }
 
-    return post({
-      msgs: [executeMsg],
-      fee: new Fee(fee.gas, { uusd: fee.amount })
-    });
-  };
+  // xastro deposit message
+  function createDepositXAstroMessage(
+    duration: number,
+    amount: Numeric.Input
+  ): MsgExecuteContract {
+    const executeMsg = {
+      send: {
+        contract: lockdropAddress,
+        amount: new Int(amount).toString(),
+        msg: createHookMsg({
+          increase_lockup: {
+            duration
+          }
+        })
+      }
+    };
+
+    return new MsgExecuteContract(
+      userWalletAddr,
+      xastroTokenAddress,
+      executeMsg
+    );
+  }
+
+  // astro deposit message
+  function createDepositMessage(
+    deposit_token: 'xastro' | 'astro',
+    duration: number,
+    amount: Numeric.Input
+  ): MsgExecuteContract {
+    const executeMsg = {
+      send: {
+        contract: lockdropAddress,
+        amount: new Int(amount).toString(),
+        msg: createHookMsg(
+          deposit_token === 'xastro'
+            ? {
+                increase_lockup: {
+                  duration
+                }
+              }
+            : {
+                stake_astro_and_increase_lockup: {
+                  duration
+                }
+              }
+        )
+      }
+    };
+
+    return new MsgExecuteContract(
+      userWalletAddr,
+      deposit_token === 'xastro' ? xastroTokenAddress : astroTokenAddress,
+      executeMsg
+    );
+  }
 
   // execute the deposit by 'sending' the xAstro token to the contract
-  const executeDepositAsset = (amount: number, duration: number): Promise<TxResult> => {
-    const executeMsg = createExecuteMsg({
-      amount,
-      duration,
-      xastroTokenAddress
-    });
+  const executeDepositAsset = (
+    deposit_token: 'xastro' | 'astro',
+    amount: number,
+    duration: number
+  ): Promise<TxResult> => {
+    const executeMsg = createDepositMessage(deposit_token, duration, amount);
     return post({
       msgs: [executeMsg],
       fee: new Fee(fee.gas, { uusd: fee.amount })
@@ -100,17 +157,25 @@ export const useLockdrop = (contractAddress?: AccAddress) => {
   };
 
   // get xAstro token balance from the xAstro contract
-  const queryWalletxAstroBalance: any = async (userWalletAddress: AccAddress): Promise<TxResult> => {
-    return lcdClient.wasm.contractQuery(xastroTokenAddress, { balance: { address: userWalletAddress } });
+  const queryWalletxAstroBalance: any = async (
+    userWalletAddress: AccAddress
+  ): Promise<TxResult> => {
+    return lcdClient.wasm.contractQuery(xastroTokenAddress, {
+      balance: { address: userWalletAddress }
+    });
   };
 
   // get user's lockdrop info
-  const queryUserLockdropInfo: any = async (userWalletAddress: AccAddress): Promise<TxResult> => {
+  const queryUserLockdropInfo: any = async (
+    userWalletAddress: AccAddress
+  ): Promise<TxResult> => {
     try {
       if (!userWalletAddress) {
         return null;
       }
-      const result = await axios.get(`https://api.apollo.farm/lockdrop/get_user_info/${userWalletAddress}/${networkName}`);
+      const result = await axios.get(
+        `https://api.apollo.farm/lockdrop/get_user_info/${userWalletAddress}/${networkName}`
+      );
       return result.data;
     } catch (e) {
       console.error(e);
@@ -119,15 +184,31 @@ export const useLockdrop = (contractAddress?: AccAddress) => {
 
   // get total lockdrop stats
   const queryTotalLockdropInfo: any = async (): Promise<TxResult> => {
-    // todo - fix endpoint to point to total lockdrop info
-    return axios.get(`https://api.apollo.farm/lockdrop/get_user_info/${lockdropAddress}/${networkName}`);
+    try {
+      const result = await axios.get(
+        `https://api.apollo.farm/lockdrop/info/${networkName}`
+      );
+      return result.data;
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  // get astro and x astro price
+  const queryPrices: any = async (): Promise<TxResult> => {
+    try {
+      const result = await axios.get(`https://api.apollo.farm/lockdrop/prices`);
+      return result.data;
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   return {
     executeDepositAsset,
-    executeExample,
     queryWalletxAstroBalance,
     queryUserLockdropInfo,
-    queryTotalLockdropInfo
+    queryTotalLockdropInfo,
+    queryPrices
   };
 };

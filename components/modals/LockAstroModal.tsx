@@ -21,15 +21,30 @@ const TOTAL_APOLLO_REWARDS = 5000000;
 const LockAstroModal: FC<Props> = ({ isOpen, onClose }) => {
   const [lockAmount, setLockAmount] = useState(0);
   const [lockPeriod, setLockPeriod] = useState(0);
+  const [astroPrice, setAstroPrice] = useState(0);
+  const [xAstroPrice, setXAstroPrice] = useState(0);
+  const [depositTotal, setDepositTotal] = useState(0);
+  const [xAstroBalance, setxAstroBalance] = useState(0);
+
   const { breakpoints } = useTheme();
   const isMobile = useMediaQuery(breakpoints.down('sm'));
 
   const userWalletAddr: any = useRecoilValue(addressState);
-  const { queryWalletxAstroBalance, executeDepositAsset } = useLockdrop();
-  const [xAstroBalance, setxAstroBalance] = useState(0);
+  const {
+    executeDepositAsset,
+    queryWalletxAstroBalance,
+    queryUserLockdropInfo,
+    queryTotalLockdropInfo,
+    queryPrices
+  } = useLockdrop();
 
-  // TODO - get current xAstro token price
+  // handle lock amount update
+  const updateLockAmount = (amount: number) => {
+    setLockAmount(amount);
+    setDepositTotal(amount * xAstroPrice);
+  };
 
+  // get the user's xAstro balance
   const getUserxAstroBalance = useCallback(async () => {
     try {
       const { balance } = await queryWalletxAstroBalance(userWalletAddr);
@@ -40,10 +55,22 @@ const LockAstroModal: FC<Props> = ({ isOpen, onClose }) => {
     }
   }, []);
 
+  // get token prices
+  const getTokenPrices = useCallback(async () => {
+    try {
+      const { xastro, astro } = await queryPrices();
+      setXAstroPrice(xastro);
+      setAstroPrice(astro);
+    } catch (e) {
+      console.error(e);
+    }
+  }, []);
+
   useEffect(() => {
     (async () => {
       if (userWalletAddr) {
         getUserxAstroBalance();
+        getTokenPrices();
       }
     })();
   }, [userWalletAddr]);
@@ -51,7 +78,11 @@ const LockAstroModal: FC<Props> = ({ isOpen, onClose }) => {
   // call the contract to lock the xastro
   const handleLockxAstro = async () => {
     try {
-      const result = await executeDepositAsset(lockAmount, lockPeriod);
+      const result = await executeDepositAsset(
+        'xastro',
+        lockAmount * 1000000,
+        Math.round(lockPeriod * 4.33)
+      );
       // todo - set loading state
     } catch (e) {
       console.error(e);
@@ -126,7 +157,13 @@ const LockAstroModal: FC<Props> = ({ isOpen, onClose }) => {
         <Box display="flex" alignItems="center" justifyContent="space-between">
           <p className="color-primary">Lock Up</p>
           <p className="color-secondary">
-            In wallet: <span className="color-link">{xAstroBalance}</span>
+            In wallet:{' '}
+            <span
+              className="color-link"
+              style={{ cursor: 'pointer' }}
+              onClick={() => updateLockAmount(xAstroBalance)}>
+              {xAstroBalance}
+            </span>
           </p>
         </Box>
         <Box
@@ -146,16 +183,21 @@ const LockAstroModal: FC<Props> = ({ isOpen, onClose }) => {
             <NumericalInput
               value={lockAmount}
               onUserInput={(val: any) => {
-                setLockAmount(val);
+                updateLockAmount(val);
               }}
             />
-            <small className="color-secondary">$4,375.00</small>
+            <small className="color-secondary">
+              {new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD'
+              }).format(depositTotal)}
+            </small>
           </Box>
         </Box>
         <Box mt="16px">
           <StyledSlider
             value={Number(lockAmount)}
-            setValue={(val) => setLockAmount(val)}
+            setValue={(val) => updateLockAmount(val)}
             maxValue={xAstroBalance}
             maxString="Max"
           />
