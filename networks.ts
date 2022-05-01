@@ -23,7 +23,7 @@ const networks: Record<string, LockdropNetworkInfo> = {
     lcd: 'https://bombay-lcd.terra.dev',
     apolloLcd: 'https://columbus-5-lcd.apollo.farm',
     mantle: 'https://bombay-mantle.terra.dev/',
-    stats: 'https://bombay-mirror-graph.terra.dev/graphql',
+    stats: 'https://testnet-hive.terra.dev/graphql',
     backend: 'https://api.apollo.farm',
     shuttle: {
       ethereum: 'terra10a29fyas9768pw8mewdrar3kzr07jz8f3n73t3',
