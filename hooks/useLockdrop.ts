@@ -81,31 +81,7 @@ export const useLockdrop = (contractAddress?: AccAddress) => {
     return Buffer.from(JSON.stringify(msg)).toString('base64');
   }
 
-  // xastro deposit message
-  function createDepositXAstroMessage(
-    duration: number,
-    amount: Numeric.Input
-  ): MsgExecuteContract {
-    const executeMsg = {
-      send: {
-        contract: lockdropAddress,
-        amount: new Int(amount).toString(),
-        msg: createHookMsg({
-          increase_lockup: {
-            duration
-          }
-        })
-      }
-    };
-
-    return new MsgExecuteContract(
-      userWalletAddr,
-      xastroTokenAddress,
-      executeMsg
-    );
-  }
-
-  // astro deposit message
+  // astro/xastro deposit message
   function createDepositMessage(
     deposit_token: 'xastro' | 'astro',
     duration: number,
