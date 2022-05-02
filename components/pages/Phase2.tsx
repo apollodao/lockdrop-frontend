@@ -26,7 +26,7 @@ const Phase2 = () => {
 
   return (
     <Container>
-      <Stack direction="column" spacing={8} mt={8}>
+      <Stack direction="column" spacing={8} mt={8} mb={8}>
         <LockdropPageHeader />
         <LockdropOverview />
         <MyxAstroTable />

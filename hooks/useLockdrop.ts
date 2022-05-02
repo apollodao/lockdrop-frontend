@@ -160,6 +160,22 @@ export const useLockdrop = (contractAddress?: AccAddress) => {
     );
   }
 
+  // astro/xastro withdraw message
+  function createWithdrawMessage(
+    duration: number,
+    amount: Numeric.Input
+  ): MsgExecuteContract {
+    const executeMsg = {
+      withdraw_from_lockup: {
+        amount: amount.toString(),
+        duration,
+        token_address: xastroTokenAddress
+      }
+    };
+
+    return new MsgExecuteContract(userWalletAddr, lockdropAddress, executeMsg);
+  }
+
   // execute the deposit by 'sending' the xAstro token to the contract
   const executeDepositAsset = (
     deposit_token: 'xastro' | 'astro',
@@ -167,6 +183,18 @@ export const useLockdrop = (contractAddress?: AccAddress) => {
     duration: number
   ): Promise<TxResult> => {
     const executeMsg = createDepositMessage(deposit_token, duration, amount);
+    return post({
+      msgs: [executeMsg],
+      fee: new Fee(fee.gas, { uusd: fee.amount })
+    });
+  };
+
+  // execute withdraw
+  const executeWithdrawAsset = (
+    duration: number,
+    amount: number
+  ): Promise<TxResult> => {
+    const executeMsg = createWithdrawMessage(duration, amount);
     return post({
       msgs: [executeMsg],
       fee: new Fee(fee.gas, { uusd: fee.amount })
@@ -230,6 +258,7 @@ export const useLockdrop = (contractAddress?: AccAddress) => {
   return {
     lockdropConfig: buildLockdropDateConfig(),
     executeDepositAsset,
+    executeWithdrawAsset,
     queryWalletxAstroBalance,
     queryUserLockdropInfo,
     queryTotalLockdropInfo,

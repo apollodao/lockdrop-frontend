@@ -229,9 +229,11 @@ const LockAstroModal: FC<Props> = ({ isOpen, onClose }) => {
                   <h5 className="color-secondary">WEEKS</h5>
                 </Box>
               </Box>
+
+              {/* // todo - update date with weeks value
               <Box textAlign="right">
                 <small className="color-secondary">August 1, 2012</small>
-              </Box>
+              </Box> */}
             </Box>
           </Grid>
         </Grid>
@@ -282,9 +284,6 @@ const LockAstroModal: FC<Props> = ({ isOpen, onClose }) => {
           onClick={handleLockxAstro}>
           Lock xASTRO
         </Button>
-        <Box mt="8px">
-          <small className="color-secondary">TX Fee: 0.25 UST</small>
-        </Box>
       </Box>
     </Modal>
   );
