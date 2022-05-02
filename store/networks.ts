@@ -31,7 +31,7 @@ export type LocalNetworkConfig = {
 export const networks: { [k in SupportedNetwork]: LocalNetworkConfig } = {
   mainnet: {
     contracts: {
-      apolloLockdrop: '',
+      apolloLockdrop: 'terra120z72wqvrtfjgyxcdnhnxn5e5chxz7ruud290n',
       xastro_token: 'terra1xj49zyqrwpv5k928jwfpfy2ha668nwdgkwlrg3',
       astro_token: 'terra14lpnyzc9z4g3ugr4lhm8s4nle0tq8vcltkhzh7'
     },
