@@ -162,6 +162,11 @@ const LaunchTimelineIntro = () => {
                 fall linearly from 50% to 0%.
               </p>
               <br />
+              <p className="color-secondary">
+                Be aware: Only 1 withdrawal per position can be made during the
+                last 2 days, after deposits are disabled.
+              </p>
+              <br />
               <p className="color-primary weight-600">Here’s how it works</p>
               <p className="color-secondary">
                 Locked up xASTRO will be deposited into the apASTRO vault which
