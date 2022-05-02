@@ -1,4 +1,5 @@
 import React, { FC, useEffect, useState, useCallback } from 'react';
+import { useTheme, useMediaQuery } from '@mui/material';
 import ApolloCardHeader from './ApolloCardHeader';
 import ApolloCardBody from './ApolloCardBody';
 import ExternalLinkIcon from './icons/ExternalLinkIcon';
@@ -27,6 +28,9 @@ import Skeleton from '@mui/material/Skeleton';
 type Props = {};
 
 const MyxAstroTableRow: FC<Props> = ({}: Props) => {
+  const { breakpoints } = useTheme();
+  const isMobile = useMediaQuery(breakpoints.down('md'));
+
   const [openLockModal, setOpenLockModal] = useState(false);
   const [openLockSuccessModal, setOpenLockSuccessModal] = useState(false);
   const [xAstroBalance, setxAstroBalance] = useState(0);
@@ -118,7 +122,20 @@ const MyxAstroTableRow: FC<Props> = ({}: Props) => {
           onClose={() => setOpenLockSuccessModal(false)}
         />
       )}
-      <Grid item md container direction="row" justifyContent="flex-start">
+      {isMobile && (
+        <Grid item xs={6}>
+          Asset
+        </Grid>
+      )}
+      <Grid
+        item
+        xs={6}
+        sm={6}
+        md={3}
+        lg={3}
+        mb={isMobile ? 2 : 0}
+        container
+        justifyContent={isMobile ? 'flex-end' : 'flex-start'}>
         {loadingLockdropBalance ? (
           <Skeleton
             variant="text"
@@ -145,7 +162,19 @@ const MyxAstroTableRow: FC<Props> = ({}: Props) => {
           </>
         )}
       </Grid>
-      <Grid item md>
+      {isMobile && (
+        <Grid item xs={6}>
+          In Lockdrop
+        </Grid>
+      )}
+      <Grid
+        item
+        xs={6}
+        sm={6}
+        md={3}
+        lg={3}
+        mb={isMobile ? 2 : 0}
+        textAlign={isMobile ? 'right' : 'left'}>
         {loadingLockdropBalance ? (
           <Skeleton
             variant="text"
@@ -160,7 +189,19 @@ const MyxAstroTableRow: FC<Props> = ({}: Props) => {
           />
         )}
       </Grid>
-      <Grid item md>
+      {isMobile && (
+        <Grid item xs={6}>
+          In Wallet
+        </Grid>
+      )}
+      <Grid
+        item
+        xs={6}
+        sm={6}
+        md={3}
+        lg={3}
+        mb={isMobile ? 2 : 0}
+        textAlign={isMobile ? 'right' : 'left'}>
         {loadingAstroBalance ? (
           <Skeleton
             variant="text"
@@ -175,7 +216,7 @@ const MyxAstroTableRow: FC<Props> = ({}: Props) => {
           />
         )}
       </Grid>
-      <Grid item md={4} textAlign="right">
+      <Grid item xs={12} sm={12} md={3} lg={3} textAlign="right">
         {loadingLockdropBalance ? (
           <Skeleton
             variant="text"

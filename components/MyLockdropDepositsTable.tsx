@@ -1,4 +1,5 @@
 import React, { FC, ReactNode, useEffect, useCallback, useState } from 'react';
+import { useTheme, useMediaQuery } from '@mui/material';
 import MyLockdropDepositsHeader from './MyLockdropDepositsHeader';
 import MyLockdropDepositsRow from './MyLockdropDepositsRow';
 import WidgetContainer from './WidgetContainer';
@@ -13,6 +14,9 @@ import { txState } from '../data/txState';
 type Props = {};
 
 const MyLockdropDepositsTable: FC<Props> = () => {
+  const { breakpoints } = useTheme();
+  const isMobile = useMediaQuery(breakpoints.down('md'));
+
   const userWalletAddr = useRecoilValue(addressState);
   const [loading, setLoading] = useState(true);
   const { queryUserLockdropInfo } = useLockdrop();
@@ -58,7 +62,7 @@ const MyLockdropDepositsTable: FC<Props> = () => {
       titleFontVariant="body2"
       padding={0}
       style={{ width: '100%' }}>
-      <MyLockdropDepositsHeader />
+      {!isMobile && <MyLockdropDepositsHeader />}
       {!userWalletAddr && (
         <MyLockdropDepositsEmptyTableRow msg="You need to connect your wallet" />
       )}
