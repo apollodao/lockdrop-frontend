@@ -72,7 +72,6 @@ const Phase2 = () => {
             {message}
           </Alert>
         </Snackbar>
-        ;
       </Stack>
     </Container>
   );
