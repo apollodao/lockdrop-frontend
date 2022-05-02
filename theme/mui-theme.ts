@@ -12,6 +12,7 @@ const divider = 'rgba(255, 255, 255, 0.2)';
 export const transparentGold = 'rgba(254,210,0,0.90)';
 export const orangeGoldGradientVert = 'linear-gradient(#fed200 0%, #fd806d 100%)';
 export const orangeGoldGradientHorz = 'linear-gradient(90deg, #fd806d 0%, #fed200 100%)';
+export const orangeGoldGradientHorz50 = 'linear-gradient(90deg, #fd806d66 0%, #fed20066 100%)';
 export const transparentGreen = 'rgba(74,218,74,0.90)';
 export const almostBlack = 'rgba(5,8,13,1.0)'; // body bg
 

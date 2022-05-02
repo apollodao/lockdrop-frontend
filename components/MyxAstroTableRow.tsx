@@ -22,6 +22,7 @@ import { addressState } from '../data/wallet';
 import { useRecoilValue } from 'recoil';
 import xastroIcon from '../public/xastro.png';
 import { txState } from '../data/txState';
+import Skeleton from '@mui/material/Skeleton';
 
 type Props = {};
 
@@ -30,6 +31,8 @@ const MyxAstroTableRow: FC<Props> = ({}: Props) => {
   const [openLockSuccessModal, setOpenLockSuccessModal] = useState(false);
   const [xAstroBalance, setxAstroBalance] = useState(0);
   const [lockdropBalance, setLockdropBalance] = useState(0);
+  const [loadingAstroBalance, setLoadingAstroBalance] = useState(true);
+  const [loadingLockdropBalance, setLoadingLockdropBalance] = useState(true);
 
   // tx state to trigger refresh of data
   const transactionState = useRecoilValue(txState);
@@ -43,25 +46,30 @@ const MyxAstroTableRow: FC<Props> = ({}: Props) => {
 
   const getUserxAstroBalance = useCallback(async () => {
     try {
+      setLoadingAstroBalance(true);
       const { balance } = await queryWalletxAstroBalance(userWalletAddr);
       setxAstroBalance(balance / 1000000);
     } catch (e) {
       console.error(e);
+    } finally {
+      setLoadingAstroBalance(false);
     }
   }, []);
 
   const getUserLockdropBalance = useCallback(async () => {
     try {
+      setLoadingLockdropBalance(true);
       const userInfo = await queryUserLockdropInfo(userWalletAddr);
       const { lockup_infos } = userInfo;
-
-      const lockdropBalance = lockup_infos.reduce(
+      const newLockdropBalance = lockup_infos.reduce(
         (acc, curr) => acc + parseInt(curr.units_locked),
         0
       );
-      setLockdropBalance(lockdropBalance);
+      setLockdropBalance(newLockdropBalance);
     } catch (e) {
       console.error(e);
+    } finally {
+      setLoadingLockdropBalance(false);
     }
   }, []);
 
@@ -111,38 +119,77 @@ const MyxAstroTableRow: FC<Props> = ({}: Props) => {
         />
       )}
       <Grid item md container direction="row" justifyContent="flex-start">
-        <Grid item sx={{ marginRight: '8px' }}>
-          <Image src={xastroIcon} width={20} height={20} alt="xAstro Icon" />
-        </Grid>
-        <Grid item>
-          <Typography
-            sx={{ fontSize: '15px', fontWeight: 500 }}
-            color={white95}>
-            xAstro
-          </Typography>
-        </Grid>
+        {loadingLockdropBalance ? (
+          <Skeleton
+            variant="text"
+            width="70%"
+            sx={{ display: 'inline-block' }}
+          />
+        ) : (
+          <>
+            <Grid item sx={{ marginRight: '8px' }}>
+              <Image
+                src={xastroIcon}
+                width={20}
+                height={20}
+                alt="xAstro Icon"
+              />
+            </Grid>
+            <Grid item>
+              <Typography
+                sx={{ fontSize: '15px', fontWeight: 500 }}
+                color={white95}>
+                xAstro
+              </Typography>
+            </Grid>
+          </>
+        )}
       </Grid>
       <Grid item md>
-        <ApolloFormattedStatistic
-          value={lockdropBalance / 1000000}
-          decimals={2}
-          decimalsInGrey={true}
-        />
+        {loadingLockdropBalance ? (
+          <Skeleton
+            variant="text"
+            width="70%"
+            sx={{ display: 'inline-block' }}
+          />
+        ) : (
+          <ApolloFormattedStatistic
+            value={lockdropBalance / 1000000}
+            decimals={2}
+            decimalsInGrey={true}
+          />
+        )}
       </Grid>
       <Grid item md>
-        <ApolloFormattedStatistic
-          value={xAstroBalance}
-          decimals={2}
-          decimalsInGrey={true}
-        />
+        {loadingAstroBalance ? (
+          <Skeleton
+            variant="text"
+            width="70%"
+            sx={{ display: 'inline-block' }}
+          />
+        ) : (
+          <ApolloFormattedStatistic
+            value={xAstroBalance}
+            decimals={2}
+            decimalsInGrey={true}
+          />
+        )}
       </Grid>
       <Grid item md={4} textAlign="right">
-        <Button
-          backgroundColor={gold}
-          color={almostBlack}
-          label="Lock xASTRO"
-          onClick={handleLockxAstro}
-        />
+        {loadingLockdropBalance ? (
+          <Skeleton
+            variant="text"
+            width="70%"
+            sx={{ display: 'inline-block' }}
+          />
+        ) : (
+          <Button
+            backgroundColor={gold}
+            color={almostBlack}
+            label="Lock xASTRO"
+            onClick={handleLockxAstro}
+          />
+        )}
       </Grid>
     </Grid>
   );

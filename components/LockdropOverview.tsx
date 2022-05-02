@@ -1,7 +1,7 @@
 import React, { FC, useCallback, useState, useEffect } from 'react';
-import { useTheme, useMediaQuery, Grid } from '@mui/material';
+import { useTheme, useMediaQuery, Grid, Skeleton, Box } from '@mui/material';
 import WidgetContainer from './WidgetContainer';
-import { white60 } from '../theme/mui-theme';
+import { white60, orangeGoldGradientHorz50 } from '../theme/mui-theme';
 import ApolloLockdropStat from './ApolloLockdropStat';
 import ApolloLockdropRewardsCard from './ApolloLockdropRewardsCard';
 import { makeStyles } from '@mui/styles';
@@ -39,6 +39,9 @@ const LockdropOverview: FC<Props> = ({}) => {
   const [totalUserRewards, setTotalUserRewards] = useState(0); // total amount of xastro rewards by user
   const [totalUserRewardsPercent, setTotalUserRewardsPercent] = useState(0); // total amount of xastro rewards by user
 
+  const [loadingLockdropInfo, setLoadingLockdropInfo] = useState(true);
+  const [loadingUserLockdropInfo, setLoadingUserLockdropInfo] = useState(true);
+
   // contract interaction methods
   const { queryUserLockdropInfo, queryTotalLockdropInfo } = useLockdrop();
 
@@ -48,16 +51,20 @@ const LockdropOverview: FC<Props> = ({}) => {
   // fetch and set lockdrop totals
   const getLockdropTotal = useCallback(async () => {
     try {
+      setLoadingLockdropInfo(true);
       const { total_amount_in_lockups } = await queryTotalLockdropInfo();
       setTotalDeposits(total_amount_in_lockups);
     } catch (e) {
       console.error(e);
+    } finally {
+      // setLoadingLockdropInfo(false);
     }
   }, []);
 
   // fetch and set user lockdrop totals
   const getUserLockdropTotal = useCallback(async () => {
     try {
+      setLoadingUserLockdropInfo(true);
       const { total_apollo_rewards, lockup_infos } =
         await queryUserLockdropInfo(userWalletAddr);
       const userDeposits = lockup_infos.reduce(
@@ -69,6 +76,8 @@ const LockdropOverview: FC<Props> = ({}) => {
       setTotalUserRewardsPercent(total_apollo_rewards / totalRewards);
     } catch (e) {
       console.error(e);
+    } finally {
+      // setLoadingUserLockdropInfo(false);
     }
   }, []);
 
@@ -107,11 +116,15 @@ const LockdropOverview: FC<Props> = ({}) => {
             <Grid item>
               <ApolloLockdropStat
                 titleContent={
-                  <ApolloFormattedStatistic
-                    value={5000000}
-                    fontSize="26px"
-                    postFix={'APOLLO'}
-                  />
+                  loadingLockdropInfo ? (
+                    <Skeleton variant="text" width="70%" />
+                  ) : (
+                    <ApolloFormattedStatistic
+                      value={5000000}
+                      fontSize="26px"
+                      postFix={'APOLLO'}
+                    />
+                  )
                 }
                 subtitle={'Total Lockdrop Rewards'}
                 textAlign={isMobile ? 'center' : 'left'}
@@ -120,12 +133,16 @@ const LockdropOverview: FC<Props> = ({}) => {
             <Grid item>
               <ApolloLockdropStat
                 titleContent={
-                  <ApolloFormattedStatistic
-                    value={totalUserRewardsPercent}
-                    decimals={2}
-                    percentage={true}
-                    fontSize="26px"
-                  />
+                  loadingLockdropInfo ? (
+                    <Skeleton variant="text" width="70%" />
+                  ) : (
+                    <ApolloFormattedStatistic
+                      value={totalUserRewardsPercent}
+                      decimals={2}
+                      percentage={true}
+                      fontSize="26px"
+                    />
+                  )
                 }
                 subtitle={'My Est. % of Lockdrop Rewards'}
                 textAlign={isMobile ? 'center' : 'left'}
@@ -134,20 +151,37 @@ const LockdropOverview: FC<Props> = ({}) => {
           </Grid>
         </Grid>
         <Grid item md={4} xs={12} textAlign="center" alignItems="center">
-          <ApolloLockdropRewardsCard amount={totalUserRewards / 1000000} />
+          <ApolloLockdropRewardsCard
+            loading={loadingLockdropInfo}
+            amount={totalUserRewards / 1000000}
+          />
         </Grid>
         <Grid item md={4} xs={12} textAlign="right">
           <Grid container direction="column" spacing={4}>
-            <Grid item>
+            <Grid item textAlign={'right'}>
               <ApolloLockdropStat
                 titleContent={
-                  <ApolloFormattedStatistic
-                    value={totalDeposits / 1000000}
-                    decimals={2}
-                    decimalsInGrey={true}
-                    postFix={'xASTRO'}
-                    fontSize="26px"
-                  />
+                  loadingLockdropInfo ? (
+                    <Box
+                      sx={{
+                        width: '100%',
+                        textAlign: 'right'
+                      }}>
+                      <Skeleton
+                        variant="text"
+                        width="70%"
+                        sx={{ display: 'inline-block' }}
+                      />
+                    </Box>
+                  ) : (
+                    <ApolloFormattedStatistic
+                      value={totalDeposits / 1000000}
+                      decimals={2}
+                      decimalsInGrey={true}
+                      postFix={'xASTRO'}
+                      fontSize="26px"
+                    />
+                  )
                 }
                 subtitle={'Total Deposits in Lockdrop'}
                 textAlign={isMobile ? 'center' : 'right'}
@@ -156,13 +190,27 @@ const LockdropOverview: FC<Props> = ({}) => {
             <Grid item>
               <ApolloLockdropStat
                 titleContent={
-                  <ApolloFormattedStatistic
-                    value={totalUserDeposits / 1000000}
-                    decimals={2}
-                    decimalsInGrey={true}
-                    postFix={'xASTRO'}
-                    fontSize="26px"
-                  />
+                  loadingLockdropInfo ? (
+                    <Box
+                      sx={{
+                        width: '100%',
+                        textAlign: 'right'
+                      }}>
+                      <Skeleton
+                        variant="text"
+                        width="70%"
+                        sx={{ display: 'inline-block' }}
+                      />
+                    </Box>
+                  ) : (
+                    <ApolloFormattedStatistic
+                      value={totalUserDeposits / 1000000}
+                      decimals={2}
+                      decimalsInGrey={true}
+                      postFix={'xASTRO'}
+                      fontSize="26px"
+                    />
+                  )
                 }
                 subtitle={'My Total Deposits in Lockdrop'}
                 textAlign={isMobile ? 'center' : 'right'}
