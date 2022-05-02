@@ -21,6 +21,8 @@ export type LocalNetworkConfig = {
     apolloLockdrop: AccAddress;
     xastro_token: AccAddress;
     astro_token: AccAddress;
+    reactorLockdrop: AccAddress;
+    retrogradeLockdrop: AccAddress;
   };
   /** Fixed fee */
   fee: { gasPrice: number; amount: number };
@@ -33,7 +35,9 @@ export const networks: { [k in SupportedNetwork]: LocalNetworkConfig } = {
     contracts: {
       apolloLockdrop: 'terra120z72wqvrtfjgyxcdnhnxn5e5chxz7ruud290n',
       xastro_token: 'terra14lpnyzc9z4g3ugr4lhm8s4nle0tq8vcltkhzh7',
-      astro_token: 'terra1xj49zyqrwpv5k928jwfpfy2ha668nwdgkwlrg3'
+      astro_token: 'terra1xj49zyqrwpv5k928jwfpfy2ha668nwdgkwlrg3',
+      reactorLockdrop: 'terra1jnf3m3rkns52husav43zyzc857wxts00vdr8j2',
+      retrogradeLockdrop: 'terra1nqmljk6hak8d9q885lmfqvnl98x5c9szspld4l'
     },
     fee: { gasPrice: 0.15, amount: 100000 }, // 0.1 UST
     stats: 'https://graphql.apollo.farm/graphql',
@@ -43,7 +47,9 @@ export const networks: { [k in SupportedNetwork]: LocalNetworkConfig } = {
     contracts: {
       apolloLockdrop: 'terra1w5yex98p6zjyz5yc40qavm99k796xnqaafsmys',
       xastro_token: 'terra1yufp7cv85qrxrx56ulpfgstt2gxz905fgmysq0',
-      astro_token: 'terra1jqcw39c42mf7ngq4drgggakk3ymljgd3r5c3r5'
+      astro_token: 'terra1jqcw39c42mf7ngq4drgggakk3ymljgd3r5c3r5',
+      reactorLockdrop: 'terra1jnf3m3rkns52husav43zyzc857wxts00vdr8j2',
+      retrogradeLockdrop: 'terra1nqmljk6hak8d9q885lmfqvnl98x5c9szspld4l'
     },
     stats: 'https://graphql.apollo.farm/graphql',
     fee: { gasPrice: 0.15, amount: 150000 }, // 0.15 UST
@@ -53,7 +59,9 @@ export const networks: { [k in SupportedNetwork]: LocalNetworkConfig } = {
     contracts: {
       apolloLockdrop: '',
       xastro_token: '',
-      astro_token: ''
+      astro_token: '',
+      reactorLockdrop: '',
+      retrogradeLockdrop: ''
     },
     stats: '',
     fee: { gasPrice: 0.15, amount: 150000 }, // 0.15 UST

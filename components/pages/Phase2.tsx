@@ -27,6 +27,7 @@ import networks, {
 import { networkNameState } from '../../data/network';
 import { white95 } from '../../theme/mui-theme';
 import AlertTitle from '@mui/material/AlertTitle';
+import AstroWarsTracker from 'components/AstroWarsTracker';
 
 const Phase2 = () => {
   const { open, message, severity, link } = useRecoilValue(snackBarState);
@@ -44,6 +45,7 @@ const Phase2 = () => {
         <LockdropOverview />
         <MyxAstroTable />
         <MyLockdropDepositsTable />
+        <AstroWarsTracker />
         <Snackbar
           open={open}
           onClose={() => setSnackBarState({ open: false, severity, message })}>

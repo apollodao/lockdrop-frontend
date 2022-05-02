@@ -63,6 +63,10 @@ export const useLockdrop = (contractAddress?: AccAddress) => {
     networks[networkName as SupportedNetwork].contracts.xastro_token;
   const astroTokenAddress =
     networks[networkName as SupportedNetwork].contracts.astro_token;
+  const reactorLockdropAddress =
+    networks[networkName as SupportedNetwork].contracts.reactorLockdrop;
+  const retrogradeLockdropAddress =
+    networks[networkName as SupportedNetwork].contracts.retrogradeLockdrop;
 
   const { post } = useWallet();
   const fee = useFee();
@@ -218,6 +222,34 @@ export const useLockdrop = (contractAddress?: AccAddress) => {
     });
   };
 
+  // query all astro lockdrops
+  const queryAllLockdrops = async (): Promise<any> => {
+
+    const lockdrops = [
+      {
+        name: 'Apollo',
+        address: lockdropAddress,
+      },
+      {
+        name: 'Retrograde',
+        address: retrogradeLockdropAddress,
+      },
+      {
+        name: 'Reactor',
+        address: reactorLockdropAddress,
+      },
+    ];
+
+    return await Promise.all(lockdrops.map(async (lockdrop: any) => {
+      return {
+        name: lockdrop.name,
+        amount: await lcdClient.wasm.contractQuery(xastroTokenAddress, {
+          balance: { address: lockdrop.address }
+        })
+      };
+    }));
+  };
+
   // query
   const query = <T>(queryMsg: any) => {
     return lcdClient.wasm.contractQuery<T>(contractAddress, queryMsg);
@@ -276,6 +308,7 @@ export const useLockdrop = (contractAddress?: AccAddress) => {
     lockdropConfig,
     executeDepositAsset,
     executeWithdrawAsset,
+    queryAllLockdrops,
     queryWalletxAstroBalance,
     queryUserLockdropInfo,
     queryTotalLockdropInfo,
