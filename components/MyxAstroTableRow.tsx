@@ -145,12 +145,6 @@ const MyxAstroTableRow: FC<Props> = ({
         <Button
           backgroundColor={gold}
           color={almostBlack}
-          sx={{
-            '&:hover': {
-              backgroundColor: buttonGrey,
-              color: white95
-            }
-          }}
           label="Lock xASTRO"
           onClick={handleLockxAstro}
         />
