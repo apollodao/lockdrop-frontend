@@ -46,19 +46,19 @@ const MyLockdropDepositsHeader: FC<Props> = () => {
         borderBottom: '2px solid',
         borderColor: borderGrey
       }}>
-      <Grid item md>
+      <Grid item md={2}>
         xASTRO Locked
       </Grid>
-      <Grid item md>
+      <Grid item md={2}>
         Fully Unlocks On
       </Grid>
-      <Grid item md>
+      <Grid item md={3}>
         Est. APOLLO Rewards
       </Grid>
-      <Grid item md>
+      <Grid item md={3}>
         Est. % of Lockdrop Rewards
       </Grid>
-      <Grid item md={3} textAlign="right">
+      <Grid item md={2} textAlign="right">
         Actions
       </Grid>
     </Grid>
