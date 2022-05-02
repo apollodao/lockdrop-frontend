@@ -137,7 +137,7 @@ const LockdropOverview: FC<Props> = ({}) => {
                     <Skeleton variant="text" width="70%" />
                   ) : (
                     <ApolloFormattedStatistic
-                      value={totalUserRewardsPercent}
+                      value={totalUserRewardsPercent * 100}
                       decimals={2}
                       percentage={true}
                       fontSize="26px"
