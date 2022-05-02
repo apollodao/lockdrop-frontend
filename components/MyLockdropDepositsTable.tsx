@@ -36,12 +36,14 @@ const MyLockdropDepositsTable: FC<Props> = () => {
     try {
       const userInfo = await queryUserLockdropInfo(userWalletAddr);
 
+      console.log('userInfo', userInfo);
+
       // TODO - fix with real values from the query
       const userLockdropRecords = userInfo.lockup_infos.map((info: any) => {
         return {
-          amount: info.amount,
-          unlocksOn: info.unlocks_on,
-          rewards: info.amount,
+          amount: parseInt(info.units_locked),
+          unlocksOn: parseInt(info.unlock_timestamp),
+          rewards: parseInt(info.apollo_rewards),
           percentOfRewards: 0
         };
       });
@@ -81,10 +83,10 @@ const MyLockdropDepositsTable: FC<Props> = () => {
             <MyLockdropDepositsRow
               key={'row-' + i}
               icon={xastroIcon}
-              amount={amount}
-              unlocksOn={unlocksOn}
-              rewards={rewards}
-              percentOfRewards={percentOfRewards}
+              amount={amount / 1000000}
+              unlocksOn={unlocksOn * 1000}
+              rewards={rewards / 1000000}
+              percentOfRewards={rewards / 1000000 / 5000000}
             />
           );
         })}

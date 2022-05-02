@@ -14,7 +14,7 @@ import WithdrawAstroModal from 'components/modals/WithdrawAstroModal';
 type Props = {
   icon: any;
   amount: any;
-  unlocksOn: string;
+  unlocksOn: number;
   rewards: number;
   percentOfRewards: number;
 };
