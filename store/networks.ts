@@ -32,8 +32,8 @@ export const networks: { [k in SupportedNetwork]: LocalNetworkConfig } = {
   mainnet: {
     contracts: {
       apolloLockdrop: '',
-      xastro_token: 'terra14lpnyzc9z4g3ugr4lhm8s4nle0tq8vcltkhzh7',
-      astro_token: ''
+      xastro_token: 'terra1xj49zyqrwpv5k928jwfpfy2ha668nwdgkwlrg3',
+      astro_token: 'terra14lpnyzc9z4g3ugr4lhm8s4nle0tq8vcltkhzh7'
     },
     fee: { gasPrice: 0.15, amount: 100000 }, // 0.1 UST
     stats: 'https://graphql.apollo.farm/graphql',
