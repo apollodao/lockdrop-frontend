@@ -1,5 +1,6 @@
 /* eslint-disable no-ternary */
 import React, { FC, ReactNode } from 'react';
+import CountUp from 'react-countup';
 import { Box, BoxProps } from '@chakra-ui/react';
 import { makeStyles } from '@mui/styles';
 import { Theme } from '@mui/material/styles';
@@ -38,7 +39,15 @@ const ApolloFormattedStatistic: FC<Props> = ({
   const classes = useStyles();
   return (
     <div className={classes.standard}>
-      <span style={{ fontSize: fontSize, marginRight: '8px' }}>
+      <CountUp
+        style={{ fontSize, marginRight: '8px' }}
+        end={value}
+        separator=","
+        decimals={decimals}
+        duration={3}
+        suffix={percentage ? '%' : ''}
+      />
+      {/* <span style={{ fontSize: fontSize, marginRight: '8px' }}>
         {Math.trunc(value).toLocaleString('en-US')}
         {decimals > 0 && (
           <span className={decimalsInGrey ? `${classes.lighter}` : ''}>
@@ -46,7 +55,7 @@ const ApolloFormattedStatistic: FC<Props> = ({
           </span>
         )}
         {percentage && '%'}
-      </span>
+      </span> */}
       <span className={`${classes.lighter} ${classes.smaller}`}>{postFix}</span>
     </div>
   );
