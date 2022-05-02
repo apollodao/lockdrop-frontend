@@ -249,6 +249,7 @@ const LockAstroModal: FC<Props> = ({ isOpen, onClose }) => {
                 <NumericalInput
                   placeholder=""
                   value={lockPeriod}
+                  disabled
                   onUserInput={(val: any) => {
                     setLockPeriod(val);
                   }}
