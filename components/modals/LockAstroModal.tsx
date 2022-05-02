@@ -371,7 +371,7 @@ const LockAstroModal: FC<Props> = ({ isOpen, onClose }) => {
               />
             </Box>
           </Box>
-          <Grid
+          {/* <Grid
             container
             mt="16px"
             py="12px"
@@ -395,7 +395,7 @@ const LockAstroModal: FC<Props> = ({ isOpen, onClose }) => {
                 </small>
               </Box>
             </Grid>
-          </Grid>
+          </Grid> */}
           <Box textAlign="center" mt="16px">
             <Button
               maxWidth={156}
