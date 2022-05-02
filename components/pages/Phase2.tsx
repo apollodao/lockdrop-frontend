@@ -17,7 +17,7 @@ import Stack from '@mui/material/Stack';
 import Container from '@mui/material/Container';
 import Alert from '@mui/material/Alert';
 import Snackbar from '@mui/material/Snackbar';
-import { snackBarState } from '../../data/Snackbar';
+import { snackBarState } from '../../data/snackBar';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import Button from '@mui/material/Button';
 
