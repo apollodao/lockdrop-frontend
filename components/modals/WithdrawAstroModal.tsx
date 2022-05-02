@@ -198,8 +198,8 @@ const WithdrawAstroModal: FC<Props> = ({
                 <h6 className="color-primary obviouslyFont">Withdraw xASTRO</h6>
               </Box>
             </Box>
-            <Box h={1} className="border" />
-            <Box p="16px">
+            <Box h={1} className="border"></Box>
+            <Box p="24px">
               <p className="color-secondary">
                 Select how much xASTRO you want to withdraw from Apollo’s xASTRO
                 Lockdrop. Starting from day 6, you will only be able to withdraw
@@ -208,7 +208,7 @@ const WithdrawAstroModal: FC<Props> = ({
               </p>
             </Box>
           </Box>
-          <Box className="panel" mt="16px" p="16px">
+          <Box className="panel" mt="16px" p="24px">
             <Box
               display="flex"
               alignItems="center"
@@ -261,7 +261,7 @@ const WithdrawAstroModal: FC<Props> = ({
               />
             </Box>
           </Box>
-          <Box className="panel" mt="16px" p="16px">
+          <Box className="panel" mt="16px" p="24px">
             <Grid container spacing={2} alignItems="center">
               <Grid item xs={12} sm={6}>
                 <p className="color-primary">Lock Period</p>
@@ -296,7 +296,7 @@ const WithdrawAstroModal: FC<Props> = ({
             container
             mt="16px"
             py="12px"
-            px="16px"
+            px="24px"
             className="panel1 bg-main">
             <Grid item xs={12} sm={6}>
               <Box display="flex" alignItems="center">
