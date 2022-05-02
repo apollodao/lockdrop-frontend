@@ -20,33 +20,34 @@ import ChromeIcon from 'components/icons/ChromeIcon';
 const TerraWallet: FC = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { status } = useWallet();
-  const browser = detect();
+  // const browser = detect();
+
   // const terraStation = new Extension();
   // const installExtension = useInstallChromeExtension();
 
-  if (!['chrome', 'opera', 'edge', 'edge-chromium'].includes(browser?.name)) {
-    return (
-      <Link
-        href="https://www.google.com/chrome/"
-        isExternal
-        _hover={{
-          textDecoration: 'none'
-        }}
-        _focus={{
-          outline: 'none',
-          boxShadow: 'none'
-        }}
-        bg="white"
-        py="2"
-        px="4"
-        borderRadius="full">
-        <HStack spacing="3">
-          <ChromeIcon width="1.25rem" height="1.25rem" />
-          <Text>Get Chrome</Text>
-        </HStack>
-      </Link>
-    );
-  }
+  // if (!['chrome', 'opera', 'edge', 'edge-chromium'].includes(browser?.name)) {
+  //   return (
+  //     <Link
+  //       href="https://www.google.com/chrome/"
+  //       isExternal
+  //       _hover={{
+  //         textDecoration: 'none'
+  //       }}
+  //       _focus={{
+  //         outline: 'none',
+  //         boxShadow: 'none'
+  //       }}
+  //       bg="white"
+  //       py="2"
+  //       px="4"
+  //       borderRadius="full">
+  //       <HStack spacing="3">
+  //         <ChromeIcon width="1.25rem" height="1.25rem" />
+  //         <Text>Get Chrome</Text>
+  //       </HStack>
+  //     </Link>
+  //   );
+  // }
 
   // if (!terraStation.isAvailable) {
   //   return (
