@@ -1,4 +1,5 @@
 import React, { FC, ReactNode } from 'react';
+import { useTheme, useMediaQuery } from '@mui/material';
 import ApolloCardHeader from './ApolloCardHeader';
 import MyLockdropDepositsHeader from './MyLockdropDepositsHeader';
 import MyxAstroTableRow from './MyxAstroTableRow';
@@ -18,6 +19,8 @@ type Props = {};
 
 const MyxAstroTable: FC<Props> = ({}) => {
   const userWalletAddr = useRecoilValue(addressState);
+  const { breakpoints } = useTheme();
+  const isMobile = useMediaQuery(breakpoints.down('md'));
 
   return (
     <WidgetContainer
@@ -28,7 +31,7 @@ const MyxAstroTable: FC<Props> = ({}) => {
       linkUrl="https://app.astroport.fi/governance"
       style={{ width: '100%' }}>
       <Stack>
-        <MyxAstroTableHeader />
+        {!isMobile && <MyxAstroTableHeader />}
         {userWalletAddr ? (
           <MyxAstroTableRow />
         ) : (

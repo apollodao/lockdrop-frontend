@@ -40,7 +40,7 @@ const ApolloFormattedStatistic: FC<Props> = ({
   return (
     <div className={classes.standard}>
       <CountUp
-        style={{ fontSize, marginRight: '8px' }}
+        style={{ fontSize, marginRight: postFix ? '8px' : 0 }}
         end={value}
         separator=","
         decimals={decimals}

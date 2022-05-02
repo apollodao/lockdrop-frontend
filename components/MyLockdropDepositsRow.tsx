@@ -1,4 +1,5 @@
 import React, { FC, useState } from 'react';
+import { useTheme, useMediaQuery } from '@mui/material';
 import ApolloCardHeader from './ApolloCardHeader';
 import ApolloCardBody from './ApolloCardBody';
 import ExternalLinkIcon from './icons/ExternalLinkIcon';
@@ -35,6 +36,9 @@ const MyLockdropDepositsRow: FC<Props> = ({
 }: Props) => {
   const [openWithdrawModal, setOpenWithdrawModal] = useState(false);
 
+  const { breakpoints } = useTheme();
+  const isMobile = useMediaQuery(breakpoints.down('md'));
+
   const handleWithdraw = () => {
     setOpenWithdrawModal(true);
   };
@@ -47,7 +51,7 @@ const MyLockdropDepositsRow: FC<Props> = ({
     <Grid
       container
       justifyContent="flex-start"
-      alignItems="center"
+      alignItems={isMobile ? 'flex-start' : 'center'}
       direction="row"
       sx={{
         color: white95,
@@ -78,7 +82,19 @@ const MyLockdropDepositsRow: FC<Props> = ({
           onClose={() => setOpenWithdrawModal(false)}
         />
       )}
-      <Grid item md container>
+      {isMobile && (
+        <Grid item xs={6} sm={6} mb={2}>
+          xASTRO Locked
+        </Grid>
+      )}
+      <Grid
+        item
+        xs={6}
+        sm={6}
+        md={2}
+        mb={isMobile ? 2 : 0}
+        container
+        justifyContent={isMobile ? 'flex-end' : 'flex-start'}>
         {loading ? (
           <Skeleton variant="text" width="70%" />
         ) : (
@@ -98,7 +114,18 @@ const MyLockdropDepositsRow: FC<Props> = ({
           </>
         )}
       </Grid>
-      <Grid item md>
+      {isMobile && (
+        <Grid item xs={6} sm={6}>
+          Fully Unlocks On
+        </Grid>
+      )}
+      <Grid
+        item
+        xs={6}
+        sm={6}
+        md={2}
+        mb={isMobile ? 2 : 0}
+        textAlign={isMobile ? 'right' : 'left'}>
         {loading ? (
           <Skeleton variant="text" width="70%" />
         ) : (
@@ -119,7 +146,19 @@ const MyLockdropDepositsRow: FC<Props> = ({
           </>
         )}
       </Grid>
-      <Grid item md container>
+      {isMobile && (
+        <Grid item xs={6} sm={6}>
+          Est. APOLLO Rewards
+        </Grid>
+      )}
+      <Grid
+        item
+        xs={6}
+        sm={6}
+        md={3}
+        mb={isMobile ? 2 : 0}
+        container
+        justifyContent={isMobile ? 'flex-end' : 'flex-start'}>
         {loading ? (
           <Skeleton variant="text" width="70%" />
         ) : (
@@ -143,7 +182,18 @@ const MyLockdropDepositsRow: FC<Props> = ({
           </>
         )}
       </Grid>
-      <Grid item md>
+      {isMobile && (
+        <Grid item xs={6} sm={6}>
+          Est. % of Lockdrop Rewards
+        </Grid>
+      )}
+      <Grid
+        item
+        xs={6}
+        sm={6}
+        md={3}
+        mb={isMobile ? 2 : 0}
+        textAlign={isMobile ? 'right' : 'left'}>
         {loading ? (
           <Skeleton variant="text" width="70%" />
         ) : (
@@ -155,7 +205,7 @@ const MyLockdropDepositsRow: FC<Props> = ({
           </>
         )}
       </Grid>
-      <Grid item md={3} textAlign="right">
+      <Grid item xs={12} sm={12} md={2} textAlign="right">
         {loading ? (
           <Skeleton
             variant="text"
