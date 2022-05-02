@@ -10,9 +10,11 @@ import Image from 'next/image';
 import Typography from '@mui/material/Typography';
 import ApolloFormattedStatistic from './ApolloFormattedStatistic';
 import WithdrawAstroModal from 'components/modals/WithdrawAstroModal';
+import Skeleton from '@mui/material/Skeleton';
 
 type Props = {
   icon: any;
+  loading: boolean;
   amount: number;
   unlocksOn: number;
   rewards: number;
@@ -23,6 +25,7 @@ type Props = {
 
 const MyLockdropDepositsRow: FC<Props> = ({
   icon,
+  loading,
   amount,
   unlocksOn,
   rewards,
@@ -76,56 +79,96 @@ const MyLockdropDepositsRow: FC<Props> = ({
         />
       )}
       <Grid item md container>
-        <Grid item sx={{ marginRight: '8px' }}>
-          <Image src={icon} width={20} height={20} alt="xAstro Icon" />
-        </Grid>
-        <Grid item>
-          <ApolloFormattedStatistic
-            value={amount}
-            decimals={2}
-            fontSize="15px"
-            decimalsInGrey={true}
-          />
-        </Grid>
+        {loading ? (
+          <Skeleton variant="text" width="70%" />
+        ) : (
+          <>
+            {' '}
+            <Grid item sx={{ marginRight: '8px' }}>
+              <Image src={icon} width={20} height={20} alt="xAstro Icon" />
+            </Grid>
+            <Grid item>
+              <ApolloFormattedStatistic
+                value={amount}
+                decimals={2}
+                fontSize="15px"
+                decimalsInGrey={true}
+              />
+            </Grid>
+          </>
+        )}
       </Grid>
       <Grid item md>
-        <div style={{ marginBottom: '4px' }}>
-          {new Date(unlocksOn).toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric',
-            timeZone: 'UTC'
-          })}
-        </div>
-        <Typography sx={{ fontSize: '14px', fontWeight: 400 }} color={white60}>
-          {daysUntilUnlock} days
-        </Typography>
+        {loading ? (
+          <Skeleton variant="text" width="70%" />
+        ) : (
+          <>
+            <div style={{ marginBottom: '4px' }}>
+              {new Date(unlocksOn).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                timeZone: 'UTC'
+              })}
+            </div>
+            <Typography
+              sx={{ fontSize: '14px', fontWeight: 400 }}
+              color={white60}>
+              {daysUntilUnlock} days
+            </Typography>
+          </>
+        )}
       </Grid>
       <Grid item md container>
-        <Grid item sx={{ marginRight: '8px' }}>
-          <Image src={apolloIcon} width={20} height={20} alt="Apollo Icon" />
-        </Grid>
-        <Grid item>
-          <ApolloFormattedStatistic
-            value={rewards}
-            decimals={2}
-            fontSize="15px"
-            decimalsInGrey={true}
-          />
-        </Grid>
+        {loading ? (
+          <Skeleton variant="text" width="70%" />
+        ) : (
+          <>
+            <Grid item sx={{ marginRight: '8px' }}>
+              <Image
+                src={apolloIcon}
+                width={20}
+                height={20}
+                alt="Apollo Icon"
+              />
+            </Grid>
+            <Grid item>
+              <ApolloFormattedStatistic
+                value={rewards}
+                decimals={2}
+                fontSize="15px"
+                decimalsInGrey={true}
+              />
+            </Grid>
+          </>
+        )}
       </Grid>
       <Grid item md>
-        {percentOfRewards.toLocaleString(undefined, {
-          style: 'percent',
-          minimumFractionDigits: 2
-        })}
+        {loading ? (
+          <Skeleton variant="text" width="70%" />
+        ) : (
+          <>
+            {percentOfRewards.toLocaleString(undefined, {
+              style: 'percent',
+              minimumFractionDigits: 2
+            })}
+          </>
+        )}
       </Grid>
       <Grid item md={3} textAlign="right">
-        <Button
-          label="Withdraw"
-          disabled={withdrawal_flag}
-          onClick={handleWithdraw}
-        />
+        {loading ? (
+          <Skeleton
+            variant="text"
+            width="70%"
+            sx={{ display: 'inline-block' }}
+          />
+        ) : (
+          <Button
+            label="Withdraw"
+            disabled={withdrawal_flag}
+            onClick={handleWithdraw}
+          />
+        )}
       </Grid>
     </Grid>
   );

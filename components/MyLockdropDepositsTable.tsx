@@ -14,7 +14,7 @@ type Props = {};
 
 const MyLockdropDepositsTable: FC<Props> = () => {
   const userWalletAddr = useRecoilValue(addressState);
-  const [loading, setLoading] = useState(true); //todo
+  const [loading, setLoading] = useState(true);
   const { queryUserLockdropInfo } = useLockdrop();
   const [lockdropRecords, setLockdropRecords] = useState([]);
 
@@ -23,6 +23,7 @@ const MyLockdropDepositsTable: FC<Props> = () => {
 
   const getUserLockdropBalance = useCallback(async () => {
     try {
+      setLoading(true);
       const userInfo = await queryUserLockdropInfo(userWalletAddr);
 
       // TODO - fix with real values from the query
@@ -38,6 +39,8 @@ const MyLockdropDepositsTable: FC<Props> = () => {
       setLockdropRecords(userLockdropRecords);
     } catch (e) {
       console.error(e);
+    } finally {
+      setLoading(false);
     }
   }, []);
 
@@ -46,7 +49,6 @@ const MyLockdropDepositsTable: FC<Props> = () => {
       if (userWalletAddr) {
         getUserLockdropBalance();
       }
-      setLoading(false);
     })();
   }, [userWalletAddr, transactionState]);
 
@@ -66,11 +68,13 @@ const MyLockdropDepositsTable: FC<Props> = () => {
       {userWalletAddr &&
         lockdropRecords.length > 0 &&
         lockdropRecords.map((deposit: any, i: number) => {
-          const { amount, unlocksOn, rewards, duration, withdrawal_flag } = deposit;
+          const { amount, unlocksOn, rewards, duration, withdrawal_flag } =
+            deposit;
           return (
             <MyLockdropDepositsRow
               key={'row-' + i}
               icon={xastroIcon}
+              loading={loading}
               amount={amount / 1000000}
               unlocksOn={unlocksOn * 1000}
               rewards={rewards / 1000000}

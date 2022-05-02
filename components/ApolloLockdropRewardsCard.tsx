@@ -14,8 +14,10 @@ import { Theme } from '@mui/material/styles';
 import apolloIcon from '../public/apollo.svg';
 import Image from 'next/image';
 import ApolloFormattedStatistic from './ApolloFormattedStatistic';
+import Skeleton from '@mui/material/Skeleton';
 
 type Props = {
+  loading: boolean;
   amount: number;
 };
 
@@ -44,7 +46,7 @@ const useStyles: any = makeStyles((theme: Theme) => ({
   }
 }));
 
-const ApolloLockdropRewardsCard = ({ amount = 100000 }) => {
+const ApolloLockdropRewardsCard = ({ loading, amount = 100000 }) => {
   const classes = useStyles();
   return (
     <Grid
@@ -82,21 +84,31 @@ const ApolloLockdropRewardsCard = ({ amount = 100000 }) => {
             direction="row"
             justifyContent="center"
             alignItems="center">
-            <Grid item sx={{ mr: 1, pt: 1 }}>
-              <Image
-                src={apolloIcon}
-                width={30}
-                height={30}
-                alt="Apollo Icon"
+            {loading ? (
+              <Skeleton
+                variant="text"
+                width="70%"
+                sx={{ display: 'inline-block' }}
               />
-            </Grid>
-            <Grid item>
-              <ApolloFormattedStatistic
-                value={amount}
-                decimals={2}
-                fontSize="26px"
-              />
-            </Grid>
+            ) : (
+              <>
+                <Grid item sx={{ mr: 1, pt: 1 }}>
+                  <Image
+                    src={apolloIcon}
+                    width={30}
+                    height={30}
+                    alt="Apollo Icon"
+                  />
+                </Grid>
+                <Grid item>
+                  <ApolloFormattedStatistic
+                    value={amount}
+                    decimals={2}
+                    fontSize="26px"
+                  />
+                </Grid>
+              </>
+            )}
           </Grid>
         </Box>
         <Box

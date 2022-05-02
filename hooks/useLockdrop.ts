@@ -71,8 +71,7 @@ export const useLockdrop = (contractAddress?: AccAddress) => {
 
 
   // implement logic to provide helpers for phase start and end dates
-  const buildLockdropDateConfig: any = () => {
-    const startDate = new Date(LOCKDROP_START_DATE);
+  const buildLockdropDateConfig: any = async (startDate: Date) => {
     const currentDate = new Date();
     const config = {
       startDate: startDate,
@@ -111,6 +110,23 @@ export const useLockdrop = (contractAddress?: AccAddress) => {
     }
 
     return config;
+  };
+
+  // get xAstro token balance from the xAstro contract
+  const queryContractConfig: any = async (): Promise<TxResult> => {
+    return lcdClient.wasm.contractQuery(lockdropAddress, {
+      config: {}
+    });
+  };
+
+  // get the current lockdrop date config
+  const lockdropConfig: any = async () => {
+    try {
+      const config = await queryContractConfig();
+      return buildLockdropDateConfig(new Date(config.init_timestamp * 1000));
+    } catch (e) {
+      console.error('error getting contract config and start date', e);
+    }
   };
 
   // prepare execution
@@ -257,7 +273,7 @@ export const useLockdrop = (contractAddress?: AccAddress) => {
   };
 
   return {
-    lockdropConfig: buildLockdropDateConfig(),
+    lockdropConfig,
     executeDepositAsset,
     executeWithdrawAsset,
     queryWalletxAstroBalance,

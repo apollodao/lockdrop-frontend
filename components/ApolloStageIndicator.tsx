@@ -1,4 +1,4 @@
-import React, { FC, ReactNode } from 'react';
+import React, { FC, ReactNode, useCallback, useEffect, useState } from 'react';
 import Typography from '@mui/material/Typography';
 import { makeStyles } from '@mui/styles';
 import { Theme } from '@mui/material/styles';
@@ -25,19 +25,32 @@ const useStyles: any = makeStyles((theme: Theme) => ({
 }));
 
 const ApolloStageIndicator: FC<Props> = ({ borderColor = darkGrey }) => {
-  const classes = useStyles();
-
   const { lockdropConfig } = useLockdrop();
   const currentDate = new Date();
+  const [startDate, setStartDate] = useState(new Date());
+  const [endDate, setEndDate] = useState(new Date());
 
-  const isToday = (i) => {
-    return (
-      currentDate.getTime() >
-        lockdropConfig.startDate.getTime() + i * 24 * 60 * 60 * 1000 &&
-      currentDate.getTime() <
-        lockdropConfig.startDate.getTime() + (i + 1) * 24 * 60 * 60 * 1000
-    );
-  };
+  useEffect(() => {
+    (async () => {
+      const cfg = await lockdropConfig();
+      if (!cfg) {
+        return;
+      }
+      setStartDate(cfg.startDate);
+      setEndDate(cfg.endDate);
+    })();
+  }, []);
+
+  const isToday = useCallback(
+    (i) => {
+      return (
+        currentDate.getTime() > startDate.getTime() + i * 24 * 60 * 60 * 1000 &&
+        currentDate.getTime() <
+          startDate.getTime() + (i + 1) * 24 * 60 * 60 * 1000
+      );
+    },
+    [startDate]
+  );
 
   return (
     <Grid container direction="column">
@@ -168,7 +181,7 @@ const ApolloStageIndicator: FC<Props> = ({ borderColor = darkGrey }) => {
             variant="body2"
             color={white60}
             sx={{ fontSize: '12px', lineHeight: '16px' }}>
-            {new Date(lockdropConfig.startDate).toLocaleDateString('en-US', {
+            {startDate.toLocaleDateString('en-US', {
               year: 'numeric',
               month: 'short',
               day: 'numeric',
@@ -186,7 +199,7 @@ const ApolloStageIndicator: FC<Props> = ({ borderColor = darkGrey }) => {
             variant="body2"
             color={white60}
             sx={{ fontSize: '12px', lineHeight: '16px' }}>
-            {new Date(lockdropConfig.endDate).toLocaleDateString('en-US', {
+            {endDate.toLocaleDateString('en-US', {
               year: 'numeric',
               month: 'short',
               day: 'numeric'
