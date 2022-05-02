@@ -5,11 +5,19 @@ import Modal from 'components/modals/MuiModal';
 import NumericalInput from 'components/NumericalInput';
 import StyledSlider from 'components/StyledSlider';
 import { ChevronLeftIcon } from '@chakra-ui/icons';
-import { white95, almostBlack, gold, buttonGrey } from '../../theme/mui-theme';
+import {
+  white95,
+  almostBlack,
+  gold,
+  buttonGrey,
+  red
+} from '../../theme/mui-theme';
 import { addressState } from '../../data/wallet';
 import { useWallet } from '@terra-money/wallet-provider';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { useLockdrop } from 'hooks/useLockdrop';
+import { snackBarState } from '../../data/snackBar';
+import { execFile } from 'child_process';
 
 type Props = {
   isOpen: boolean;
@@ -25,8 +33,12 @@ const LockAstroModal: FC<Props> = ({ isOpen, onClose }) => {
   const [xAstroPrice, setXAstroPrice] = useState(0);
   const [depositTotal, setDepositTotal] = useState(0);
   const [xAstroBalance, setxAstroBalance] = useState(0);
+  const [lockDisabledMessage, setLockDisabledMessage] = useState('');
 
-  const lockDisabled = lockAmount <= 0 || lockPeriod <= 0;
+  const setSnackBarState = useSetRecoilState(snackBarState);
+
+  const lockDisabled =
+    lockAmount <= 0 || lockPeriod <= 0 || lockAmount > xAstroBalance;
 
   const { breakpoints } = useTheme();
   const isMobile = useMediaQuery(breakpoints.down('sm'));
@@ -51,8 +63,12 @@ const LockAstroModal: FC<Props> = ({ isOpen, onClose }) => {
     try {
       const { balance } = await queryWalletxAstroBalance(userWalletAddr);
       setxAstroBalance(balance / 1000000);
-      console.log('balance', balance);
     } catch (e) {
+      setSnackBarState({
+        severity: 'error',
+        message: `Error getting user xAstro balance`,
+        open: true
+      });
       console.error(e);
     }
   }, []);
@@ -64,6 +80,11 @@ const LockAstroModal: FC<Props> = ({ isOpen, onClose }) => {
       setXAstroPrice(xastro);
       setAstroPrice(astro);
     } catch (e) {
+      setSnackBarState({
+        severity: 'error',
+        message: `Error getting token prices`,
+        open: true
+      });
       console.error(e);
     }
   }, []);
@@ -80,24 +101,31 @@ const LockAstroModal: FC<Props> = ({ isOpen, onClose }) => {
   // call the contract to lock the xastro
   const handleLockxAstro = async () => {
     try {
-      const result = await executeDepositAsset(
+      const response = await executeDepositAsset(
         'xastro',
         lockAmount * 1000000,
         lockPeriod
       );
-      // todo - set loading state
+
+      console.log('response', response);
+      if (response.success) {
+        setSnackBarState({
+          severity: 'success',
+          message: `xAstroDeposit complete! Hash: ${response.result.txhash}`,
+          link: response.result.txhash,
+          open: true
+        });
+      } else {
+        throw new Error('xAstroDeposit failed');
+      }
     } catch (e) {
+      setSnackBarState({
+        severity: 'error',
+        message: `An error occured and the xAstroDeposit transaction was not completed.`,
+        open: true
+      });
       console.error(e);
     }
-  };
-
-  const handleParamsChange = useCallback(() => {
-    console.log('lockAmount', lockAmount);
-    console.log('lockPeriod', lockPeriod);
-  }, [lockAmount, lockPeriod]);
-
-  const handleLockupDurationChange = (val: any) => {
-    // setLockPeriod(val.toString()
   };
 
   // todo - check the math here
@@ -147,7 +175,7 @@ const LockAstroModal: FC<Props> = ({ isOpen, onClose }) => {
             <h6 className="color-primary obviouslyFont">Lock xASTRO</h6>
           </Box>
         </Box>
-        <Box h={1} className="border"></Box>
+        <Box h={1} className="border" />
         <Box p="24px">
           <p className="color-secondary">
             Select how much xASTRO you want to deposit into Apollo’s xASTRO
@@ -276,12 +304,21 @@ const LockAstroModal: FC<Props> = ({ isOpen, onClose }) => {
           fontFamily="Obviously, sans-serif"
           backgroundColor={lockDisabled ? buttonGrey : gold}
           color={almostBlack}
-          backgroundHoverColor={buttonGrey}
-          hoverColor={white95}
+          sx={{
+            '&:hover': {
+              backgroundColor: lockDisabled ? buttonGrey : gold,
+              color: white95
+            }
+          }}
           disabled={lockDisabled}
           onClick={handleLockxAstro}>
           Lock xASTRO
         </Button>
+        {lockDisabledMessage && (
+          <Box mt="8px" sx={{ color: red }}>
+            {{ lockDisabledMessage }}
+          </Box>
+        )}
         <Box mt="8px">
           <small className="color-secondary">TX Fee: 0.25 UST</small>
         </Box>

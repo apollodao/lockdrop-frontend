@@ -128,8 +128,12 @@ const WithdrawAstroModal: FC<Props> = ({ isOpen, onClose }) => {
           backgroundColor={withdrawDisabled ? buttonGrey : gold}
           disabled={withdrawDisabled}
           color={almostBlack}
-          backgroundHoverColor={buttonGrey}
-          hoverColor={white95}>
+          sx={{
+            '&:hover': {
+              color: white95,
+              backgroundColor: buttonGrey
+            }
+          }}>
           Withdraw xASTRO
         </Button>
         <Box mt="8px">
