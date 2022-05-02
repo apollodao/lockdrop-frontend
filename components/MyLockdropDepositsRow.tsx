@@ -13,9 +13,10 @@ import WithdrawAstroModal from 'components/modals/WithdrawAstroModal';
 
 type Props = {
   icon: any;
-  amount: any;
+  amount: number;
   unlocksOn: number;
   rewards: number;
+  duration: number;
   percentOfRewards: number;
 };
 
@@ -24,6 +25,7 @@ const MyLockdropDepositsRow: FC<Props> = ({
   amount,
   unlocksOn,
   rewards,
+  duration,
   percentOfRewards
 }: Props) => {
   const [openWithdrawModal, setOpenWithdrawModal] = useState(false);
@@ -62,6 +64,11 @@ const MyLockdropDepositsRow: FC<Props> = ({
       }}>
       {openWithdrawModal && (
         <WithdrawAstroModal
+          amount={amount}
+          unlocksOn={unlocksOn}
+          rewards={rewards}
+          duration={duration}
+          percentOfRewards={percentOfRewards}
           isOpen={openWithdrawModal}
           onClose={() => setOpenWithdrawModal(false)}
         />

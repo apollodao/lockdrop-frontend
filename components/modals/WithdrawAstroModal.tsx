@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useCallback, useState, useEffect } from 'react';
 import { Box, Image, Button } from '@chakra-ui/react';
 import { Grid, useTheme, useMediaQuery } from '@mui/material';
 import Modal from 'components/modals/MuiModal';
@@ -6,18 +6,75 @@ import NumericalInput from 'components/NumericalInput';
 import StyledSlider from 'components/StyledSlider';
 import { ChevronLeftIcon } from '@chakra-ui/icons';
 import { white95, almostBlack, gold, buttonGrey } from '../../theme/mui-theme';
+import { addressState } from '../../data/wallet';
+import { useRecoilValue } from 'recoil';
+import { useLockdrop } from 'hooks/useLockdrop';
 
 type Props = {
+  amount: number;
+  unlocksOn: number;
+  rewards: number;
+  duration: number;
+  percentOfRewards: number;
   isOpen: boolean;
   onClose: () => void;
 };
 
-const WithdrawAstroModal: FC<Props> = ({ isOpen, onClose }) => {
-  const [withdrawAmount, setWithdrawAmount] = useState('');
+const WithdrawAstroModal: FC<Props> = ({
+  amount,
+  unlocksOn,
+  rewards,
+  duration,
+  isOpen,
+  onClose
+}) => {
+  const [withdrawAmount, setWithdrawAmount] = useState(0);
+  const [xAstroPrice, setXAstroPrice] = useState(0);
+  const [withdrawValue, setWithdrawValue] = useState(0);
+  const { queryPrices, executeWithdrawAsset } = useLockdrop();
   const { breakpoints } = useTheme();
   const isMobile = useMediaQuery(breakpoints.down('sm'));
+  const userWalletAddr: any = useRecoilValue(addressState);
 
   const withdrawDisabled = Number(withdrawAmount) <= 0;
+
+  // handle withdraw amount update
+  const updateWithdrawAmount = (amount: number) => {
+    setWithdrawAmount(amount);
+    setWithdrawValue(amount * xAstroPrice);
+  };
+
+  // get token prices
+  const getTokenPrices = useCallback(async () => {
+    try {
+      const { xastro } = await queryPrices();
+      setXAstroPrice(xastro);
+    } catch (e) {
+      console.error(e);
+    }
+  }, []);
+
+  // call the contract to withdraw the xastro
+  const handleWithdrawXAstro = async () => {
+    try {
+      const result = await executeWithdrawAsset(
+        duration,
+        withdrawAmount * 1000000
+      );
+      // todo - set loading state
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  // set state effect
+  useEffect(() => {
+    (async () => {
+      if (userWalletAddr) {
+        getTokenPrices();
+      }
+    })();
+  }, [userWalletAddr]);
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
@@ -44,7 +101,13 @@ const WithdrawAstroModal: FC<Props> = ({ isOpen, onClose }) => {
         <Box display="flex" alignItems="center" justifyContent="space-between">
           <p className="color-primary">Withdraw</p>
           <p className="color-secondary">
-            Withdrawable: <span className="color-link">15,000</span>
+            Withdrawable:{' '}
+            <span
+              className="color-link"
+              style={{ cursor: 'pointer' }}
+              onClick={() => updateWithdrawAmount(amount)}>
+              {amount}
+            </span>
           </p>
         </Box>
         <Box
@@ -63,16 +126,23 @@ const WithdrawAstroModal: FC<Props> = ({ isOpen, onClose }) => {
           <Box flex={1} textAlign="right">
             <NumericalInput
               value={withdrawAmount}
-              onUserInput={setWithdrawAmount}
+              onUserInput={(val: any) => {
+                updateWithdrawAmount(val);
+              }}
             />
-            <small className="color-secondary">$4,375.00</small>
+            <small className="color-secondary">
+              {new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD'
+              }).format(withdrawValue)}
+            </small>
           </Box>
         </Box>
         <Box mt="16px">
           <StyledSlider
             value={Number(withdrawAmount)}
-            setValue={(val) => setWithdrawAmount(val.toString())}
-            maxValue={1000}
+            setValue={(val) => updateWithdrawAmount(val)}
+            maxValue={amount}
             maxString="Max"
           />
         </Box>
@@ -85,13 +155,21 @@ const WithdrawAstroModal: FC<Props> = ({ isOpen, onClose }) => {
           <Grid item xs={12} sm={6}>
             <Box className="panel1" py="8px" px="12px">
               <Box display="flex" alignItems="center" justifyContent="flex-end">
-                <h2 className="color-primary">3</h2>
+                <h2 className="color-primary">{duration}</h2>
                 <Box ml="6px">
                   <h5 className="color-secondary">WEEKS</h5>
                 </Box>
               </Box>
               <Box textAlign="right">
-                <small className="color-secondary">August 1, 2012</small>
+                <small className="color-secondary">
+                  {' '}
+                  {new Date(unlocksOn).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric',
+                    timeZone: 'UTC'
+                  })}
+                </small>
               </Box>
             </Box>
           </Grid>
@@ -102,7 +180,7 @@ const WithdrawAstroModal: FC<Props> = ({ isOpen, onClose }) => {
           <Box display="flex" alignItems="center">
             <Image src="/apollo.png" width={20} />
             <Box ml="6px">
-              <p className="color-primary">6,350.00</p>
+              <p className="color-primary">{rewards.toFixed(3)}</p>
             </Box>
           </Box>
           <small className="color-secondary">Est. APOLLO Rewards</small>
@@ -110,7 +188,9 @@ const WithdrawAstroModal: FC<Props> = ({ isOpen, onClose }) => {
         <Grid item container xs={12} sm={6}>
           {!isMobile && <Box width="1px" className="border" />}
           <Box mt={isMobile ? '12px' : 0} ml={isMobile ? 0 : '16px'}>
-            <p className="color-primary">0.375%</p>
+            <p className="color-primary">
+              {((rewards / 5000000) * 100).toFixed(2) + '%'}
+            </p>
             <small className="color-secondary">
               Est. % of Lockdrop Rewards
             </small>
@@ -128,6 +208,7 @@ const WithdrawAstroModal: FC<Props> = ({ isOpen, onClose }) => {
           backgroundColor={withdrawDisabled ? buttonGrey : gold}
           disabled={withdrawDisabled}
           color={almostBlack}
+          onClick={handleWithdrawXAstro}
           sx={{
             '&:hover': {
               color: white95,
@@ -136,9 +217,6 @@ const WithdrawAstroModal: FC<Props> = ({ isOpen, onClose }) => {
           }}>
           Withdraw xASTRO
         </Button>
-        <Box mt="8px">
-          <small className="color-secondary">TX Fee: 0.25 UST</small>
-        </Box>
       </Box>
     </Modal>
   );
