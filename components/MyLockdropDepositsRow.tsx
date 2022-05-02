@@ -17,6 +17,7 @@ type Props = {
   unlocksOn: number;
   rewards: number;
   duration: number;
+  withdrawal_flag: boolean;
   percentOfRewards: number;
 };
 
@@ -26,6 +27,7 @@ const MyLockdropDepositsRow: FC<Props> = ({
   unlocksOn,
   rewards,
   duration,
+  withdrawal_flag,
   percentOfRewards
 }: Props) => {
   const [openWithdrawModal, setOpenWithdrawModal] = useState(false);
@@ -119,7 +121,11 @@ const MyLockdropDepositsRow: FC<Props> = ({
         })}
       </Grid>
       <Grid item md={3} textAlign="right">
-        <Button label="Withdraw" onClick={handleWithdraw} />
+        <Button
+          label="Withdraw"
+          disabled={withdrawal_flag}
+          onClick={handleWithdraw}
+        />
       </Grid>
     </Grid>
   );

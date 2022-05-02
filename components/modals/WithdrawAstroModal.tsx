@@ -13,6 +13,7 @@ import { snackBarState } from '../../data/snackBar';
 import { networkNameState, lcdClientQuery } from '../../data/network';
 import { isSupportedNetwork } from '../../store/networks';
 import { poll } from 'poll';
+import { txState } from '../../data/txState';
 
 type Props = {
   amount: number;
@@ -47,6 +48,9 @@ const WithdrawAstroModal: FC<Props> = ({
   const [pollingTransactionHash, setPollingTransactionHash] = useState('');
 
   const setSnackBarState = useSetRecoilState(snackBarState);
+
+  // tx state to trigger refresh of data
+  const setTransactionState = useSetRecoilState(txState);
 
   const withdrawDisabled = Number(withdrawAmount) <= 0;
 
@@ -98,6 +102,7 @@ const WithdrawAstroModal: FC<Props> = ({
                   link: response.result.txhash,
                   open: true
                 });
+                setTransactionState(response.result.txhash);
               }
               onClose();
             })

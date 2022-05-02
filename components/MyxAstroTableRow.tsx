@@ -19,27 +19,20 @@ import LockAstroModal from 'components/modals/LockAstroModal';
 import LockSuccessModal from 'components/modals/LockSuccessModal';
 import { useLockdrop } from 'hooks/useLockdrop';
 import { addressState } from '../data/wallet';
-import { useWallet } from '@terra-money/wallet-provider';
 import { useRecoilValue } from 'recoil';
+import xastroIcon from '../public/xastro.png';
+import { txState } from '../data/txState';
 
-type Props = {
-  icon: any;
-  name: any;
-  amount: number;
-  inWallet: number;
-};
+type Props = {};
 
-const MyxAstroTableRow: FC<Props> = ({
-  icon,
-  name,
-  amount,
-  inWallet
-}: Props) => {
-  // todo
+const MyxAstroTableRow: FC<Props> = ({}: Props) => {
   const [openLockModal, setOpenLockModal] = useState(false);
   const [openLockSuccessModal, setOpenLockSuccessModal] = useState(false);
   const [xAstroBalance, setxAstroBalance] = useState(0);
   const [lockdropBalance, setLockdropBalance] = useState(0);
+
+  // tx state to trigger refresh of data
+  const transactionState = useRecoilValue(txState);
 
   const handleLockxAstro = () => {
     setOpenLockModal(true);
@@ -59,7 +52,9 @@ const MyxAstroTableRow: FC<Props> = ({
 
   const getUserLockdropBalance = useCallback(async () => {
     try {
-      const { lockup_infos } = await queryUserLockdropInfo(userWalletAddr);
+      const userInfo = await queryUserLockdropInfo(userWalletAddr);
+      const { lockup_infos } = userInfo;
+
       const lockdropBalance = lockup_infos.reduce(
         (acc, curr) => acc + parseInt(curr.units_locked),
         0
@@ -77,7 +72,7 @@ const MyxAstroTableRow: FC<Props> = ({
         getUserLockdropBalance();
       }
     })();
-  }, [userWalletAddr]);
+  }, [userWalletAddr, transactionState]);
 
   return (
     <Grid
@@ -117,13 +112,13 @@ const MyxAstroTableRow: FC<Props> = ({
       )}
       <Grid item md container direction="row" justifyContent="flex-start">
         <Grid item sx={{ marginRight: '8px' }}>
-          <Image src={icon} width={20} height={20} alt="xAstro Icon" />
+          <Image src={xastroIcon} width={20} height={20} alt="xAstro Icon" />
         </Grid>
         <Grid item>
           <Typography
             sx={{ fontSize: '15px', fontWeight: 500 }}
             color={white95}>
-            {name}
+            xAstro
           </Typography>
         </Grid>
       </Grid>

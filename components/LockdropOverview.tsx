@@ -77,7 +77,7 @@ const LockdropOverview: FC<Props> = ({}) => {
     (async () => {
       getLockdropTotal();
     })();
-  }, [totalDeposits]);
+  }, [totalDeposits, transactionState]);
 
   // initial state if user is connected
   useEffect(() => {
