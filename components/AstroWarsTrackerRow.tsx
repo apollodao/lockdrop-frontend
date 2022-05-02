@@ -40,6 +40,7 @@ const AstroWarsTrackerBody: FC<Props> = ({ name, amount, total, max }) => {
             display: 'inline-block',
             width: (Math.round(amount / 1000000) / max) * 100 + '%',
             height: '20px',
+            borderRadius: '10px',
             background: orangeGoldGradientHorz
           }}></Grid>
       </Grid>
