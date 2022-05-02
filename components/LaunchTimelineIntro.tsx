@@ -1,6 +1,6 @@
 import React from 'react';
 import dayjs from 'dayjs';
-import { Box } from '@chakra-ui/react';
+import { Box, Button } from '@chakra-ui/react';
 import { Grid, Typography, useMediaQuery, useTheme } from '@mui/material';
 
 import { useAstroApp } from 'modules/common';
@@ -9,12 +9,15 @@ import DateNumber from 'components/DateNumber';
 import CardHeader from 'components/CardHeader';
 import Card from 'components/Card';
 import ApolloStageIndicator from './ApolloStageIndicator';
-import { white95 } from '../theme/mui-theme';
+import { white95, gold, almostBlack } from '../theme/mui-theme';
 import { useLockdrop } from 'hooks/useLockdrop';
+import { useRouter } from 'next/router';
 
 const LaunchTimelineIntro = () => {
   // const { phase1StartDate, phase2StartDate } = useAstroApp();
   // const endDate = phase1StartDate?.add(14, 'day');
+
+  const router = useRouter();
 
   const { breakpoints } = useTheme();
   const isMobile = useMediaQuery(breakpoints.down('md'));
@@ -174,6 +177,20 @@ const LaunchTimelineIntro = () => {
                 When your lock expires, you will be able to withdraw apASTRO
                 (can be traded for xASTRO or held for continued rewards).
               </p>
+            </Box>
+            <Box mt="16px" textAlign="center">
+              <Button
+                maxWidth={200}
+                width="100%"
+                borderRadius={15}
+                height={45}
+                fontSize={13}
+                fontFamily="Obviously, sans-serif"
+                backgroundColor={gold}
+                color={almostBlack}
+                onClick={() => router.push('/active-phase')}>
+                Enter Lockdrop
+              </Button>
             </Box>
           </Box>
         </Grid>
