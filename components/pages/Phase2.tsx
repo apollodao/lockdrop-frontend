@@ -25,7 +25,7 @@ import networks, {
   SupportedNetwork
 } from '../../store/networks';
 import { networkNameState } from '../../data/network';
-import { white95 } from 'theme/mui-theme';
+import { white95 } from '../../theme/mui-theme';
 import AlertTitle from '@mui/material/AlertTitle';
 
 const Phase2 = () => {

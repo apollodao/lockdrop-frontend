@@ -18,13 +18,9 @@ import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { useLockdrop } from 'hooks/useLockdrop';
 import { snackBarState } from '../../data/snackBar';
 import { execFile } from 'child_process';
-import { networkNameState } from '../../data/network';
+import { lcdClientQuery, networkNameState } from '../../data/network';
 import { CircularProgress } from '@mui/material';
-import { lcdClientQuery } from '../../data/network';
-import networks, {
-  isSupportedNetwork,
-  SupportedNetwork
-} from '../../store/networks';
+import { isSupportedNetwork } from '../../store/networks';
 import { poll } from 'poll';
 import { TxInfo } from '@terra-money/terra.js';
 
@@ -122,8 +118,6 @@ const LockAstroModal: FC<Props> = ({ isOpen, onClose }) => {
         lockAmount * 1000000,
         lockPeriod
       );
-
-      console.log('response', response);
       if (response.success) {
         setPollingTransactionHash(response.result.txhash);
 
@@ -313,8 +307,7 @@ const LockAstroModal: FC<Props> = ({ isOpen, onClose }) => {
               <Box flex={1} textAlign="right">
                 <NumericalInput
                   placeholder=""
-                  value={lockPeriod}
-                  disabled
+                  value={lockAmount}
                   onUserInput={(val: any) => {
                     updateLockAmount(val);
                   }}
@@ -350,6 +343,7 @@ const LockAstroModal: FC<Props> = ({ isOpen, onClose }) => {
                     <NumericalInput
                       placeholder=""
                       value={lockPeriod}
+                      disabled
                       onUserInput={(val: any) => {
                         setLockPeriod(val);
                       }}
@@ -427,9 +421,6 @@ const LockAstroModal: FC<Props> = ({ isOpen, onClose }) => {
                 {{ lockDisabledMessage }}
               </Box>
             )}
-            <Box mt="8px">
-              <small className="color-secondary">TX Fee: 0.25 UST</small>
-            </Box>
           </Box>
         </>
       )}
