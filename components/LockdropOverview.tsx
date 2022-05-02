@@ -57,7 +57,7 @@ const LockdropOverview: FC<Props> = ({}) => {
     } catch (e) {
       console.error(e);
     } finally {
-      // setLoadingLockdropInfo(false);
+      setLoadingLockdropInfo(false);
     }
   }, []);
 
