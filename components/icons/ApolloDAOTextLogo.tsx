@@ -45,7 +45,7 @@ export default function ApolloDAOTextLogo(props: any) {
             transform="translate(-222.49 -159.078)"
             fill="rgba(255,255,255,0.95)"
             font-size="23"
-            font-family="OmnesSemiBold, Omnes">
+            font-family="omnes-pro, omnes-semicond">
             <tspan x="0" y="0">
               Apollo DAO
             </tspan>
