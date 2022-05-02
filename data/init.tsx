@@ -9,7 +9,7 @@ import { networkNameState } from '../data/network';
 export const useInitAddress = () => {
   const address = useAddress();
   const setAddress = useSetRecoilState(addressState);
-  useConnectGraph();
+  // useConnectGraph();
 
   useEffect(() => {
     setAddress(address || '');

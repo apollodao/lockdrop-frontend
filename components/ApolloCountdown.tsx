@@ -39,9 +39,6 @@ const useStyles: any = makeStyles((theme: Theme) => ({
 const ApolloCountdown: FC<Props> = ({}) => {
   const classes = useStyles();
   const { lockdropConfig } = useLockdrop();
-
-  console.log('stageIndicator', lockdropConfig.currentStage);
-
   let countdownDate = lockdropConfig.startDate;
   let countdownTitle = 'LOCKDROP BEGINS IN';
   switch (lockdropConfig.currentStage) {

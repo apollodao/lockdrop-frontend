@@ -89,26 +89,26 @@ const LaunchTimelineIntro = () => {
             <p className="color-primary weight-600">
               xAstro Lockdrop Overview:
             </p>
-            <p className="color-secondary">
-              <ul style={{ marginLeft: 20 }}>
-                <li>
-                  Launching on the 2nd of May with deposits open for 5 days{' '}
-                </li>
-                <li>
-                  Deposit and lock up Astro/xAstro for between 3 and 12 months{' '}
-                </li>
-                <li>
-                  5 million Apollo tokens (5% of total supply) shared among
-                  depositors{' '}
-                </li>
-                <li>Apollo tokens vested linearly over 12 months </li>
-                <li>
-                  Receive bonus Apollo tokens linearly from the end of the
-                  Lockdrop and then receive your Astro deposit, plus all the
-                  accrued yield at the end of your lock period.
-                </li>
-              </ul>
-            </p>
+            <ul
+              style={{ marginLeft: 20, fontSize: '14px', lineHeight: '20px' }}
+              className="color-secondary">
+              <li>
+                Launching on the 2nd of May with deposits open for 5 days{' '}
+              </li>
+              <li>
+                Deposit and lock up Astro/xAstro for between 3 and 12 months{' '}
+              </li>
+              <li>
+                5 million Apollo tokens (5% of total supply) shared among
+                depositors{' '}
+              </li>
+              <li>Apollo tokens vested linearly over 12 months </li>
+              <li>
+                Receive bonus Apollo tokens linearly from the end of the
+                Lockdrop and then receive your Astro deposit, plus all the
+                accrued yield at the end of your lock period.
+              </li>
+            </ul>
             <br />
             <p className="color-secondary">
               Apollo’s aim with our Convex model is not to just attract large

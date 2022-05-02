@@ -14,15 +14,16 @@ import LockdropOverview from 'components/LockdropOverview';
 import MyxAstroTable from 'components/MyxAstroTable';
 import MyLockdropDepositsTable from 'components/MyLockdropDepositsTable';
 import Stack from '@mui/material/Stack';
-import { white60 } from '../../theme/mui-theme';
-import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
+import Alert from '@mui/material/Alert';
+import Snackbar from '@mui/material/Snackbar';
+import { snackBarState } from '../../data/Snackbar';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
+import Button from '@mui/material/Button';
 
 const Phase2 = () => {
-  const { phase2EndDate } = useAstroApp();
-  const phase2EndTimestamp = phase2EndDate?.unix();
-  const timestamp = dayjs().unix();
-  const currentPhase = phase2EndTimestamp < timestamp ? 3 : 2;
+  const { open, message, severity, link } = useRecoilValue(snackBarState);
+  const setSnackBarState = useSetRecoilState(snackBarState);
 
   return (
     <Container>
@@ -31,6 +32,23 @@ const Phase2 = () => {
         <LockdropOverview />
         <MyxAstroTable />
         <MyLockdropDepositsTable />
+        <Snackbar
+          open={open}
+          onClose={() => setSnackBarState({ open: false, severity, message })}>
+          <Alert
+            severity={severity}
+            variant={'filled'}
+            action={
+              link && (
+                <Button size={'small'} href={`#`} target={'_blank'}>
+                  View On Finder
+                </Button>
+              )
+            }>
+            {message}
+          </Alert>
+        </Snackbar>
+        ;
       </Stack>
     </Container>
   );

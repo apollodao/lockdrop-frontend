@@ -86,8 +86,12 @@ const WalletDisclaimerPopover: FC<Props> = ({ onClick }) => {
             isDisabled={!disclaimerChecked}
             backgroundColor={!disclaimerChecked ? buttonGrey : gold}
             color={almostBlack}
-            backgroundHoverColor={buttonGrey}
-            hoverColor={white95}>
+            sx={{
+              '&:hover': {
+                backgroundColor: buttonGrey,
+                color: white95
+              }
+            }}>
             Accept
           </Button>
         </Box>

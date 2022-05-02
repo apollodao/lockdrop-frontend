@@ -92,11 +92,11 @@ export const useLockdrop = (contractAddress?: AccAddress) => {
     };
     config.endDate = new Date(
       config.startDate.getTime() +
-        config.phases.reduce((acc, phase) => acc + phase.duration, 0) *
-          24 *
-          60 *
-          60 *
-          1000
+      config.phases.reduce((acc, phase) => acc + phase.duration, 0) *
+      24 *
+      60 *
+      60 *
+      1000
     );
 
     // current stage logic
@@ -140,15 +140,15 @@ export const useLockdrop = (contractAddress?: AccAddress) => {
         msg: createHookMsg(
           deposit_token === 'xastro'
             ? {
-                increase_lockup: {
-                  duration
-                }
+              increase_lockup: {
+                duration
               }
+            }
             : {
-                stake_astro_and_increase_lockup: {
-                  duration
-                }
+              stake_astro_and_increase_lockup: {
+                duration
               }
+            }
         )
       }
     };

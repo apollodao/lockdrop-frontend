@@ -208,9 +208,13 @@ const WithdrawAstroModal: FC<Props> = ({
           backgroundColor={withdrawDisabled ? buttonGrey : gold}
           disabled={withdrawDisabled}
           color={almostBlack}
-          backgroundHoverColor={buttonGrey}
-          hoverColor={white95}
-          onClick={handleWithdrawXAstro}>
+          onClick={handleWithdrawXAstro}
+          sx={{
+            '&:hover': {
+              color: white95,
+              backgroundColor: buttonGrey
+            }
+          }}>
           Withdraw xASTRO
         </Button>
       </Box>
