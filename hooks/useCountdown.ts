@@ -10,7 +10,7 @@ export const useCountdown: (options: CountdownOptions) => number = ({
   interval = 60000,
 }) => {
   const [ms, setMs] = useState<number>(targetTime - Date.now());
-  const [countdownIntervalId, setCountdoiwnIntervalId] =
+  const [countdownIntervalId, setCountdownIntervalId] =
     useState<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
@@ -18,7 +18,7 @@ export const useCountdown: (options: CountdownOptions) => number = ({
     const intervalId = setInterval(() => {
       setMs(targetTime - Date.now());
     }, interval);
-    setCountdoiwnIntervalId(intervalId);
+    setCountdownIntervalId(intervalId);
 
     return () => {
       if (countdownIntervalId) {

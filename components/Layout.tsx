@@ -1,12 +1,25 @@
-import React, { FC } from "react";
-import { Box, Flex } from "@chakra-ui/react";
-import { Global } from "@emotion/react";
-import { TerraWebappProvider } from "@arthuryeti/terra";
-import { useWallet, WalletStatus } from "@terra-money/wallet-provider";
+import React, { FC } from 'react';
+import { Flex } from '@chakra-ui/react';
+import { Container } from '@mui/material';
+import { Global } from '@emotion/react';
+import { TerraWebappProvider } from '@arthuryeti/terra';
+import { useWallet, WalletStatus } from '@terra-money/wallet-provider';
 
-import Navbar from "components/Navbar";
-import whitelist from "constants/whitelist.json";
-import { AstroAppProvider } from "modules/common";
+import { RecoilRoot } from 'recoil';
+import { useInitAddress, useInitNetwork } from '../data/init';
+
+import { ThemeProvider } from '@mui/material/styles';
+import { almostBlack, theme } from '../theme/mui-theme';
+
+import Header from 'components/Header';
+import whitelist from 'constants/whitelist.json';
+import { AstroAppProvider } from 'modules/common';
+
+const RecoilInit = () => {
+  useInitAddress();
+  useInitNetwork();
+  return <></>;
+};
 
 const Layout: FC = ({ children }) => {
   const wallet = useWallet();
@@ -16,39 +29,43 @@ const Layout: FC = ({ children }) => {
     <Flex height="100vh" direction="column">
       <Global
         styles={{
-          "html,body": {
+          'html,body': {
             // height: "100%",
-            width: "100%",
-            overflowX: "hidden",
-            position: "relative",
+            width: '100%',
+            overflowX: 'hidden',
+            position: 'relative'
           },
           body: {
-            backgroundColor: "#000D37",
+            backgroundColor: almostBlack
           },
-          "*::-webkit-scrollbar": {
-            width: "6px",
+          '*::-webkit-scrollbar': {
+            width: '6px'
           },
-          "*::-webkit-scrollbar-thumb": {
-            backgroundColor: "#5643F2",
-            borderRadius: "6px",
+          '*::-webkit-scrollbar-thumb': {
+            backgroundColor: '#fed200',
+            background: 'linear-gradient(#fed200 0%, #fd806d 100%)',
+            borderRadius: '6px'
           },
-          "#chakra-toast-manager-bottom-right": {
-            right: "32px!important",
-            bottom: "32px!important",
+          '#chakra-toast-manager-bottom-right': {
+            right: '32px!important',
+            bottom: '32px!important'
           },
-          "@font-face": {
-            fontFamily: "WhyteInktrap",
-            src: "url('/WhyteInktrap-Regular.woff') format('woff')",
-          },
+          '@font-face': {
+            fontFamily: 'WhyteInktrap',
+            src: "url('/WhyteInktrap-Regular.woff') format('woff')"
+          }
         }}
       />
       {!isInitializing && (
         <TerraWebappProvider>
           <AstroAppProvider data={whitelist}>
-            <Box>
-              <Navbar />
-            </Box>
-            <Box flex="1">{children}</Box>
+            <RecoilRoot>
+              <RecoilInit />
+              <ThemeProvider theme={theme}>
+                <Header />
+                <Container>{children}</Container>
+              </ThemeProvider>
+            </RecoilRoot>
           </AstroAppProvider>
         </TerraWebappProvider>
       )}

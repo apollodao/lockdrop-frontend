@@ -1,0 +1,66 @@
+@use './variables' as *;
+
+h1, .h1, h2, .h2, h3, .h3, h4, .h4, h6, .h6, caption, .caption, p, .p, h5, .h5, small, .small {
+  margin: 0;
+}
+
+.obviouslyFont {
+  font-family: 'Obviously', sans-serif;
+}
+
+h1, .h1 {
+  font-size: 30px;
+  line-height: 36px;
+}
+
+h2, .h2 {
+  font-size: 24px;
+  line-height: 30px;
+}
+
+h3, .h3 {
+  font-size: 20px;
+  line-height: 25px;
+}
+
+h4, .h4 {
+  font-size: 17px;
+  line-height: 20px;
+}
+
+h5, .h5 {
+  font-size: 16px;
+  line-height: 19px;
+}
+
+h6, .h6 {
+  font-size: 14px;
+  line-height: 17px;
+}
+
+p, .p {
+  font-size: 14px;
+  line-height: 20px;
+}
+
+a {
+  text-decoration: underline;
+}
+
+small, .small {
+  font-size: 12px;
+  line-height: 14px;
+}
+
+.weight-400 {
+  font-weight: 400;
+}
+
+.weight-600 {
+  font-weight: 600;
+}
+
+caption, .caption {
+  font-size: 12px;
+  line-height: 14px;
+}

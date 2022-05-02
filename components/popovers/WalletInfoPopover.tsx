@@ -1,6 +1,7 @@
-import React, { FC } from "react";
-import { useRouter } from "next/router";
-import copy from "copy-to-clipboard";
+import React, { FC } from 'react';
+import { useRouter } from 'next/router';
+import { useTheme, useMediaQuery } from '@mui/material';
+import copy from 'copy-to-clipboard';
 import {
   Box,
   chakra,
@@ -12,29 +13,33 @@ import {
   useToast,
   Button,
   Text,
-  VStack,
-} from "@chakra-ui/react";
-import { fromTerraAmount, useAddress, useBalance } from "@arthuryeti/terra";
-import { useWallet, useConnectedWallet } from "@terra-money/wallet-provider";
+  VStack
+} from '@chakra-ui/react';
+import { fromTerraAmount, useAddress, useBalance } from '@arthuryeti/terra';
+import { useWallet, useConnectedWallet } from '@terra-money/wallet-provider';
 
-import { truncate } from "libs/text";
-import { useTokenInfo } from "modules/common";
-import useFinder from "hooks/useFinder";
+import { truncate } from 'libs/text';
+import { useTokenInfo } from 'modules/common';
+import useFinder from 'hooks/useFinder';
 
-import WalletPopover from "components/WalletPopover";
-import TerraIcon from "components/icons/TerraIcon";
-import CopyIcon from "components/icons/CopyIcon";
-import ViewIcon from "components/icons/ViewIcon";
-// import CloseIcon from "components/icons/CloseIcon";
+import WalletPopover from 'components/WalletPopover';
+import TerraIcon from 'components/icons/TerraIcon';
+import CopyIcon from 'components/icons/CopyIcon';
+import ViewIcon from 'components/icons/ViewIcon';
+import CloseIcon from 'components/icons/CloseIcon';
+import { white95, almostBlack, gold, buttonGrey } from '../../theme/mui-theme';
 
 const WalletInfoPopover: FC = () => {
+  const { breakpoints } = useTheme();
+  const isMobile = useMediaQuery(breakpoints.down('sm'));
+
   const { getIcon, getSymbol } = useTokenInfo();
   const { disconnect } = useWallet();
   const wallet = useConnectedWallet();
   const toast = useToast();
-  const icon = getIcon("uusd");
-  const symbol = getSymbol("uusd");
-  const balance = useBalance("uusd");
+  const icon = getIcon('uusd');
+  const symbol = getSymbol('uusd');
+  const balance = useBalance('uusd');
   const terraAddress = useAddress();
   const finder = useFinder();
   const router = useRouter();
@@ -42,88 +47,76 @@ const WalletInfoPopover: FC = () => {
   const copyAddress = () => {
     copy(terraAddress);
     toast({
-      title: "Address copied",
-      description: "Your Terra address is now in your clipboard",
-      status: "info",
+      title: 'Address copied',
+      description: 'Your Terra address is now in your clipboard',
+      status: 'info',
       duration: 2000,
-      isClosable: false,
+      isClosable: false
     });
   };
 
   const handleDisconnect = () => {
     const pathname = router.pathname;
     if (
-      router.pathname.includes("/lock") ||
-      router.pathname.includes("/unlock")
+      router.pathname.includes('/lock') ||
+      router.pathname.includes('/unlock')
     ) {
-      router.push("/active-phase");
+      router.push('/active-phase');
     }
     disconnect();
   };
 
   return (
     <WalletPopover
-      title="In my wallet"
-      offset={[-60, -40]}
+      offset={[20, 0]}
       triggerElement={() => (
         <chakra.button type="button">
           <Flex color="white" spacing="0.5" justify="center">
-            <Box
-              color="white"
-              bg="brand.lightBlue"
-              py="2"
-              px="3"
-              borderTopLeftRadius="full"
-              borderBottomLeftRadius="full"
-              mr="0.5"
-            >
-              <HStack spacing="3">
-                <TerraIcon width="1.25rem" height="1.25rem" />
-                <Text fontSize="sm" color="white">
-                  {wallet && truncate(wallet.terraAddress)}
-                </Text>
-              </HStack>
-            </Box>
+            <HStack spacing="3">
+              <TerraIcon width="16px" height="16px" />
+              <Text fontSize="sm" color="white">
+                {wallet && truncate(wallet.terraAddress)}
+              </Text>
+            </HStack>
             <Center
               color="white"
               bg="brand.lightBlue"
               py="2"
               px="3"
               borderTopRightRadius="full"
-              borderBottomRightRadius="full"
-            >
+              borderBottomRightRadius="full">
               <HStack spacing="3">
                 <Text fontSize="sm" color="white">
                   UST
                 </Text>
                 <Text fontSize="sm" color="white">
-                  {fromTerraAmount(balance, "0,0.00")}
+                  {fromTerraAmount(balance, '0,0.00')}
                 </Text>
               </HStack>
             </Center>
           </Flex>
         </chakra.button>
-      )}
-    >
-      <Flex direction="column" justify="center">
+      )}>
+      <Box
+        maxWidth={isMobile ? '100vw' : '500px'}
+        p="12px"
+        pt="20px"
+        className="panel">
+        <Box mb="16px">
+          <h3 className="color-primary">In my wallet</h3>
+        </Box>
         <Flex flex={1} justify="space-between" align="center" py="2">
-          <HStack flex={1}>
-            <Image boxSize="8" src={icon} alt="" />
-            <Box>
-              <Text textStyle="h3" lineHeight="1">
-                {symbol}
-              </Text>
-              <Text textStyle="small" variant="dimmed">
-                Terra
-              </Text>
+          <Box display="flex" alignItems="center">
+            <Image width="24px" src={icon} alt="" />
+            <Box ml="8px">
+              <h3 className="color-primary">{symbol}</h3>
+              <p className="color-secondary">Terra</p>
             </Box>
-          </HStack>
-          <Flex direction="column" width={1 / 3} gridRowGap={1}>
+          </Box>
+          <Flex direction="column">
             <HStack flex={1} justify="space-between">
-              <Text flex={1} textStyle="small" variant="dimmed">
-                In Wallet:{" "}
-              </Text>
-              <Text textStyle="small">$ {fromTerraAmount(balance)}</Text>
+              <p className="color-secondary">In Wallet: </p>
+              <p className="color-primary">$ {fromTerraAmount(balance)}</p>
             </HStack>
             {/* <HStack justify="space-between">
                 <Text flex={1} textStyle="small" variant="dimmed">
@@ -135,40 +128,49 @@ const WalletInfoPopover: FC = () => {
               </HStack> */}
           </Flex>
         </Flex>
-        <VStack mt={6} align="flex-start">
-          <Text textStyle="minibutton">My Address</Text>
-          <Text textStyle="small" variant="dimmed">
+        <VStack my="12px" align="flex-start">
+          <h5 className="color-primary weight-600">My Address</h5>
+          <Text className="color-secondary" textStyle="small" variant="dimmed">
             {truncate(terraAddress, [16, 16])}
           </Text>
         </VStack>
-        <Flex mt={6} justify="space-between">
+        <Flex justify="space-between">
           <chakra.button onClick={copyAddress}>
             <HStack>
-              <CopyIcon width="1.5rem" height="1.5rem" fill="brand.deepBlue" />
-              <Text textStyle="small" variant="dimmed">
+              <CopyIcon width="1.5rem" height="1.5rem" fill="white" />
+              <Text
+                className="color-primary"
+                textStyle="small"
+                variant="dimmed">
                 Copy Address
               </Text>
             </HStack>
           </chakra.button>
           <Link isExternal href={finder(terraAddress)}>
-            <HStack>
-              <ViewIcon width="1.5rem" height="1.5rem" fill="brand.deepBlue" />
-              <Text textStyle="small" variant="dimmed">
+            <HStack ml="8px">
+              <ViewIcon width="1.5rem" height="1.5rem" fill="white" />
+              <Text
+                className="color-primary"
+                textStyle="small"
+                variant="dimmed">
                 View on Terra Finder
               </Text>
             </HStack>
           </Link>
         </Flex>
-      </Flex>
-      <Box mt="6">
-        <Button
-          type="button"
-          variant="primary"
-          isFullWidth
-          onClick={handleDisconnect}
-        >
-          Disconnect
-        </Button>
+        <Box mt="12px" textAlign="right">
+          <Button
+            maxWidth={156}
+            width="100%"
+            borderRadius={15}
+            height={45}
+            fontSize={13}
+            fontFamily="Obviously, sans-serif"
+            backgroundColor={gold}
+            onClick={handleDisconnect}>
+            Disconnect
+          </Button>
+        </Box>
       </Box>
     </WalletPopover>
   );

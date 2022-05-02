@@ -1,115 +1,102 @@
-import React, { FC, useState } from "react";
+import React, { FC, useState } from 'react';
+import { useTheme, useMediaQuery } from '@mui/material';
 import {
   chakra,
+  Box,
   HStack,
   Link,
   Button,
   Text,
-  Checkbox,
-  VStack,
-} from "@chakra-ui/react";
-import NextLink from "next/link";
+  VStack
+} from '@chakra-ui/react';
+import { Checkbox } from '@mui/material';
+import NextLink from 'next/link';
 
-import WalletPopover from "components/WalletPopover";
-import TerraIcon from "components/icons/TerraIcon";
+import WalletPopover from 'components/WalletPopover';
+import TerraIcon from 'components/icons/TerraIcon';
+import { white95, almostBlack, gold, buttonGrey } from '../../theme/mui-theme';
 
 type Props = {
   onClick: () => void;
 };
 
 const WalletDisclaimerPopover: FC<Props> = ({ onClick }) => {
-  const [checkedItems, setCheckedItems] = useState([false, false]);
-  const allChecked = checkedItems.every(Boolean);
+  const [disclaimerChecked, setDisclaimerChecked] = useState(false);
+  const { breakpoints } = useTheme();
+  const isMobile = useMediaQuery(breakpoints.down('sm'));
 
   return (
     <WalletPopover
-      title="Disclaimer"
-      offset={[-85, -40]}
+      offset={[20, 0]}
       triggerElement={() => (
         <chakra.button
           type="button"
           color="white"
           _focus={{
-            outline: "none",
-            boxShadow: "none",
+            outline: 'none',
+            boxShadow: 'none'
           }}
           _hover={{
-            bg: "brand.purple",
+            bg: 'brand.purple'
           }}
           bg="brand.lightBlue"
           py="2"
           px="4"
-          borderRadius="full"
-        >
+          borderRadius="full">
           <HStack spacing="3">
             <TerraIcon width="1.25rem" height="1.25rem" />
             <Text>Connect your wallet</Text>
           </HStack>
         </chakra.button>
-      )}
-    >
-      <Text textStyle="small">
-        By connecting a wallet, you agree to Astroport’s Terms of Service and
-        acknowledge that you have read and understand the protocol’s
-        disclaimers. Please check the boxes below to confirm your agreement to
-        the{" "}
-        <Link
-          href="https://astroport.fi/terms-and-conditions"
-          color="brand.purple"
-          isExternal
-        >
-          Astroport Terms and Conditions
-        </Link>
-      </Text>
-      <VStack mt="10" spacing="10" align="stretch">
-        <VStack spacing="6" fontWeight="500">
-          <Checkbox
-            colorScheme="purple"
-            alignItems="flex-start"
-            size="md"
-            isChecked={checkedItems[0]}
-            onChange={(e) =>
-              setCheckedItems([e.target.checked, checkedItems[1]])
-            }
-          >
-            <Text pl="2" textStyle="small">
-              I have read and understood, and do hereby agree to be legally
-              bound as a ‘User’ under, the Terms, including all future
-              amendments thereto. Such agreement is irrevocable and will apply
-              to all of my uses of the Site without me providing confirmation in
-              each specific instance.
-            </Text>
-          </Checkbox>
-          <Checkbox
-            colorScheme="primary"
-            alignItems="flex-start"
-            size="md"
-            isChecked={checkedItems[1]}
-            onChange={(e) =>
-              setCheckedItems([checkedItems[0], e.target.checked])
-            }
-          >
-            <Text pl="2" textStyle="small">
-              I acknowledge and agree that the Site solely provides information
-              about data on the Terra blockchain. I accept that the Site
-              operators have no custody over my funds, ability or duty to
-              transact on my behalf or power to reverse my transactions. The
-              Site operators do not endorse or provide any warranty with respect
-              to any tokens.
-            </Text>
-          </Checkbox>
-        </VStack>
-        <VStack spacing="3">
+      )}>
+      <Box
+        maxWidth={isMobile ? '100vw' : '500px'}
+        p="12px"
+        pt="20px"
+        className="panel">
+        <Box mb="16px" ml="8px">
+          <h3 className="color-primary">Disclaimer</h3>
+        </Box>
+        <Box display="flex" alignItems="flex-start">
+          <Box mt="-8px" mr="6px">
+            <Checkbox
+              color="secondary"
+              checked={disclaimerChecked}
+              onChange={(e) =>
+                setDisclaimerChecked(e.target.checked)
+              }></Checkbox>
+          </Box>
+          <p className="color-primary">
+            I acknowledge and agree that the Site solely provides information
+            about data on the Terra blockchain. I accept that the Site operators
+            have no custody over my funds, ability or duty to transact on my
+            behalf or power to reverse my transactions. The Site operators do
+            not endorse or provide any warranty with respect to any tokens.
+          </p>
+        </Box>
+        <Box mt="12px" textAlign="right">
           <Button
-            variant="primary"
-            isFullWidth
+            maxWidth={156}
+            width="100%"
+            borderRadius={15}
+            height={45}
+            fontSize={13}
+            fontFamily="Obviously, sans-serif"
             onClick={onClick}
-            isDisabled={!allChecked}
-          >
+            isDisabled={!disclaimerChecked}
+            backgroundColor={!disclaimerChecked ? buttonGrey : gold}
+            color={almostBlack}
+            sx={{
+              '&:hover': {
+                backgroundColor: buttonGrey,
+                color: white95
+              }
+            }}>
             Accept
           </Button>
-        </VStack>
-      </VStack>
+        </Box>
+      </Box>
+      <VStack spacing="3"></VStack>
     </WalletPopover>
   );
 };
