@@ -8,29 +8,18 @@ import { addressState } from '../data/wallet';
 import { useRecoilValue } from 'recoil';
 import MyLockdropDepositsEmptyTableRow from './MyLockdropDepositsEmptyTableRow';
 import { useLockdrop } from 'hooks/useLockdrop';
+import { txState } from '../data/txState';
 
 type Props = {};
-
-const sampleLockdropDeposits = [
-  {
-    amount: 15000,
-    unlocksOn: '2023-04-06T00:00:00.000Z',
-    rewards: 75000,
-    percentOfRewards: 0.0075
-  },
-  {
-    amount: 5000,
-    unlocksOn: '2022-06-06T00:00:00.000Z',
-    rewards: 55000,
-    percentOfRewards: 0.0025
-  }
-];
 
 const MyLockdropDepositsTable: FC<Props> = () => {
   const userWalletAddr = useRecoilValue(addressState);
   const [loading, setLoading] = useState(true); //todo
   const { queryUserLockdropInfo } = useLockdrop();
   const [lockdropRecords, setLockdropRecords] = useState([]);
+
+  // tx state to trigger refresh of data
+  const transactionState = useRecoilValue(txState);
 
   const getUserLockdropBalance = useCallback(async () => {
     try {
@@ -59,7 +48,7 @@ const MyLockdropDepositsTable: FC<Props> = () => {
       }
       setLoading(false);
     })();
-  }, [userWalletAddr]);
+  }, [userWalletAddr, transactionState]);
 
   return (
     <WidgetContainer
@@ -77,7 +66,7 @@ const MyLockdropDepositsTable: FC<Props> = () => {
       {userWalletAddr &&
         lockdropRecords.length > 0 &&
         lockdropRecords.map((deposit: any, i: number) => {
-          const { amount, unlocksOn, rewards, duration } = deposit;
+          const { amount, unlocksOn, rewards, duration, withdrawal_flag } = deposit;
           return (
             <MyLockdropDepositsRow
               key={'row-' + i}
@@ -86,6 +75,7 @@ const MyLockdropDepositsTable: FC<Props> = () => {
               unlocksOn={unlocksOn * 1000}
               rewards={rewards / 1000000}
               duration={duration}
+              withdrawal_flag={withdrawal_flag}
               percentOfRewards={rewards / 1000000 / 5000000}
             />
           );

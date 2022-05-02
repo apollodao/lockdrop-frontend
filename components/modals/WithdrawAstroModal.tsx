@@ -13,6 +13,7 @@ import { snackBarState } from '../../data/snackBar';
 import { networkNameState, lcdClientQuery } from '../../data/network';
 import { isSupportedNetwork } from '../../store/networks';
 import { poll } from 'poll';
+import { txState } from '../../data/txState';
 
 type Props = {
   amount: number;
@@ -48,6 +49,9 @@ const WithdrawAstroModal: FC<Props> = ({
 
   const setSnackBarState = useSetRecoilState(snackBarState);
 
+  // tx state to trigger refresh of data
+  const setTransactionState = useSetRecoilState(txState);
+
   const withdrawDisabled = Number(withdrawAmount) <= 0;
 
   // handle withdraw amount update
@@ -71,7 +75,7 @@ const WithdrawAstroModal: FC<Props> = ({
     try {
       const response = await executeWithdrawAsset(
         duration,
-        withdrawAmount * 1000000
+        Math.round(withdrawAmount * 1000000)
       );
       if (response.success) {
         setPollingTransactionHash(response.result.txhash);
@@ -87,7 +91,7 @@ const WithdrawAstroModal: FC<Props> = ({
               if (result.raw_log.indexOf('failed') >= 0) {
                 setSnackBarState({
                   severity: 'error',
-                  message: `xAstro Withdraw error: ${result.row_log}`,
+                  message: `xAstro Withdraw error: ${result.raw_log}`,
                   link: response.result.txhash,
                   open: true
                 });
@@ -98,6 +102,7 @@ const WithdrawAstroModal: FC<Props> = ({
                   link: response.result.txhash,
                   open: true
                 });
+                setTransactionState(response.result.txhash);
               }
               onClose();
             })
@@ -193,7 +198,7 @@ const WithdrawAstroModal: FC<Props> = ({
                 <h6 className="color-primary obviouslyFont">Withdraw xASTRO</h6>
               </Box>
             </Box>
-            <Box h={1} className="border"></Box>
+            <Box h={1} className="border" />
             <Box p="16px">
               <p className="color-secondary">
                 Select how much xASTRO you want to withdraw from Apollo’s xASTRO

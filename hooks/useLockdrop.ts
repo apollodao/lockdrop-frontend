@@ -6,7 +6,7 @@ import {
   Int,
   Numeric
 } from '@terra-money/terra.js';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import networks, {
   isSupportedNetwork,
   SupportedNetwork
@@ -68,6 +68,7 @@ export const useLockdrop = (contractAddress?: AccAddress) => {
   const fee = useFee();
   const userWalletAddr = useRecoilValue(addressState);
   const lcdClient = useRecoilValue(lcdClientQuery);
+
 
   // implement logic to provide helpers for phase start and end dates
   const buildLockdropDateConfig: any = () => {
