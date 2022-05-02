@@ -10,6 +10,7 @@ import ApolloFormattedStatistic from './ApolloFormattedStatistic';
 import { addressState } from '../data/wallet';
 import { useRecoilValue } from 'recoil';
 import { useLockdrop } from 'hooks/useLockdrop';
+import { txState } from '../data/txState';
 
 type Props = {};
 
@@ -25,6 +26,7 @@ const useStyles: any = makeStyles((theme: Theme) => ({
 
 const LockdropOverview: FC<Props> = ({}) => {
   const classes = useStyles();
+
   // user wallet address
   const userWalletAddr = useRecoilValue(addressState);
   const { breakpoints } = useTheme();
@@ -39,6 +41,9 @@ const LockdropOverview: FC<Props> = ({}) => {
 
   // contract interaction methods
   const { queryUserLockdropInfo, queryTotalLockdropInfo } = useLockdrop();
+
+  // tx state to trigger refresh of data
+  const transactionState = useRecoilValue(txState);
 
   // fetch and set lockdrop totals
   const getLockdropTotal = useCallback(async () => {
@@ -81,7 +86,7 @@ const LockdropOverview: FC<Props> = ({}) => {
         getUserLockdropTotal();
       }
     })();
-  }, [userWalletAddr, totalDeposits]);
+  }, [userWalletAddr, totalDeposits, transactionState]);
 
   return (
     <WidgetContainer

@@ -61,7 +61,7 @@ const Phase2 = () => {
                   sx={{
                     color: white95,
                     padding: '12px',
-                    height: '32px'
+                    height: '24px'
                   }}
                   href={`https://finder.extraterrestrial.money/${networkName}/tx/${link}`}
                   target={'_blank'}>

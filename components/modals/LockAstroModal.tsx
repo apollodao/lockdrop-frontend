@@ -23,6 +23,7 @@ import { CircularProgress } from '@mui/material';
 import { isSupportedNetwork } from '../../store/networks';
 import { poll } from 'poll';
 import { TxInfo } from '@terra-money/terra.js';
+import { txState } from '../../data/txState';
 
 type Props = {
   isOpen: boolean;
@@ -48,6 +49,9 @@ const LockAstroModal: FC<Props> = ({ isOpen, onClose }) => {
   const [pollingTransactionHash, setPollingTransactionHash] = useState('');
 
   const setSnackBarState = useSetRecoilState(snackBarState);
+
+  // tx state to trigger refresh of data
+  const setTransactionState = useSetRecoilState(txState);
 
   const lockDisabled =
     lockAmount <= 0 || lockPeriod <= 0 || lockAmount > xAstroBalance;
@@ -132,7 +136,7 @@ const LockAstroModal: FC<Props> = ({ isOpen, onClose }) => {
               if (result.raw_log.indexOf('failed') >= 0) {
                 setSnackBarState({
                   severity: 'error',
-                  message: `xAstroDeposit error: ${result.row_log}`,
+                  message: `xAstroDeposit error: ${result.raw_log}`,
                   link: response.result.txhash,
                   open: true
                 });
@@ -143,6 +147,7 @@ const LockAstroModal: FC<Props> = ({ isOpen, onClose }) => {
                   link: response.result.txhash,
                   open: true
                 });
+                setTransactionState(response.result.txhash);
               }
               onClose();
             })
