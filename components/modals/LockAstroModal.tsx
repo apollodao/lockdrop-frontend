@@ -18,6 +18,15 @@ import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { useLockdrop } from 'hooks/useLockdrop';
 import { snackBarState } from '../../data/snackBar';
 import { execFile } from 'child_process';
+import { networkNameState } from '../../data/network';
+import { CircularProgress } from '@mui/material';
+import { lcdClientQuery } from '../../data/network';
+import networks, {
+  isSupportedNetwork,
+  SupportedNetwork
+} from '../../store/networks';
+import { poll } from 'poll';
+import { TxInfo } from '@terra-money/terra.js';
 
 type Props = {
   isOpen: boolean;
@@ -27,6 +36,12 @@ type Props = {
 const TOTAL_APOLLO_REWARDS = 5000000;
 
 const LockAstroModal: FC<Props> = ({ isOpen, onClose }) => {
+  let networkName: any = useRecoilValue(networkNameState);
+  if (!networkName || !isSupportedNetwork(networkName)) {
+    networkName = 'mainnet';
+  }
+  const lcdClient = useRecoilValue(lcdClientQuery);
+
   const [lockAmount, setLockAmount] = useState(0);
   const [lockPeriod, setLockPeriod] = useState(0);
   const [astroPrice, setAstroPrice] = useState(0);
@@ -34,6 +49,7 @@ const LockAstroModal: FC<Props> = ({ isOpen, onClose }) => {
   const [depositTotal, setDepositTotal] = useState(0);
   const [xAstroBalance, setxAstroBalance] = useState(0);
   const [lockDisabledMessage, setLockDisabledMessage] = useState('');
+  const [pollingTransactionHash, setPollingTransactionHash] = useState('');
 
   const setSnackBarState = useSetRecoilState(snackBarState);
 
@@ -109,12 +125,39 @@ const LockAstroModal: FC<Props> = ({ isOpen, onClose }) => {
 
       console.log('response', response);
       if (response.success) {
-        setSnackBarState({
-          severity: 'success',
-          message: `xAstroDeposit complete! Hash: ${response.result.txhash}`,
-          link: response.result.txhash,
-          open: true
-        });
+        setPollingTransactionHash(response.result.txhash);
+
+        let stopPolling = false;
+        const shouldStopPolling = () => stopPolling;
+        const pollForDepositComplete = () => {
+          lcdClient.tx
+            .txInfo(response.result.txhash)
+            .then((result: any) => {
+              console.log('it worked', result);
+              stopPolling = true;
+              if (result.raw_log.indexOf('failed') >= 0) {
+                setSnackBarState({
+                  severity: 'error',
+                  message: `xAstroDeposit error: ${result.row_log}`,
+                  link: response.result.txhash,
+                  open: true
+                });
+              } else {
+                setSnackBarState({
+                  severity: 'success',
+                  message: `xAstroDeposit completed successfully!`,
+                  link: response.result.txhash,
+                  open: true
+                });
+              }
+              onClose();
+            })
+            .catch((result: any) => {
+              console.log(result);
+            });
+        };
+
+        poll(pollForDepositComplete, 1000, shouldStopPolling);
       } else {
         throw new Error('xAstroDeposit failed');
       }
@@ -166,166 +209,230 @@ const LockAstroModal: FC<Props> = ({ isOpen, onClose }) => {
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
-      <Box className="panel">
-        <Box p="16px">
-          <Box className="backIcon" onClick={onClose}>
-            <ChevronLeftIcon fontSize={28} />
-          </Box>
-          <Box textAlign="center">
-            <h6 className="color-primary obviouslyFont">Lock xASTRO</h6>
-          </Box>
-        </Box>
-        <Box h={1} className="border" />
-        <Box p="24px">
-          <p className="color-secondary">
-            Select how much xASTRO you want to deposit into Apollo’s xASTRO
-            Lockdrop and how long you would like to lock it. Note that once
-            Stage 2 begins (Day 6) you will not be able to make any xASTRO
-            deposits into the Lockdrop.
-          </p>
-        </Box>
-      </Box>
-      <Box className="panel" mt="16px" p="24px">
-        <Box display="flex" alignItems="center" justifyContent="space-between">
-          <p className="color-primary">Lock Up</p>
-          <p className="color-secondary">
-            In wallet:{' '}
-            <span
-              className="color-link"
-              style={{ cursor: 'pointer' }}
-              onClick={() => updateLockAmount(xAstroBalance)}>
-              {xAstroBalance}
-            </span>
-          </p>
-        </Box>
-        <Box
-          py="8px"
-          px="12px"
-          mt="12px"
-          display="flex"
-          alignItems="center"
-          className="panel1 bg-main">
-          <Box display="flex" alignItems="center">
-            <Image src="/xastro.png" width={30} />
-            <Box ml="6px">
-              <h5 className="color-primary">xASTRO</h5>
+      {pollingTransactionHash ? (
+        <Box className="panel">
+          <Box p="16px">
+            <Box className="backIcon" onClick={onClose}>
+              <ChevronLeftIcon fontSize={28} />
+            </Box>
+            <Box textAlign="center">
+              <h6 className="color-primary obviouslyFont">
+                Waiting for Transaction
+              </h6>
             </Box>
           </Box>
-          <Box flex={1} textAlign="right">
-            <NumericalInput
-              value={lockAmount}
-              onUserInput={(val: any) => {
-                updateLockAmount(val);
+          <Box h={1} className="border" />
+          <Box p="32px" textAlign={'center'}>
+            <CircularProgress color="warning" />
+            <Box sx={{ marginBottom: '20px' }} className="color-secondary">
+              Your Transaction:
+            </Box>
+            <Box sx={{ marginBottom: '20px' }} className="color-primary">
+              {pollingTransactionHash}
+            </Box>
+            <Box sx={{ marginBottom: '20px' }} className="color-secondary">
+              has been submitted and is being processed. Please stand by for
+              transaction confirmation. You will be redirected automatically
+              once complete.
+            </Box>
+            <Button
+              maxWidth={156}
+              width="100%"
+              borderRadius={10}
+              height={45}
+              fontSize={'13px'}
+              fontFamily="Obviously, sans-serif"
+              backgroundColor={gold}
+              color={almostBlack}
+              sx={{
+                '&:hover': {
+                  backgroundColor: buttonGrey,
+                  color: white95
+                }
               }}
-            />
-            <small className="color-secondary">
-              {new Intl.NumberFormat('en-US', {
-                style: 'currency',
-                currency: 'USD'
-              }).format(depositTotal)}
-            </small>
+              onClick={() => {
+                window.open(
+                  `https://finder.extraterrestrial.money/${networkName}/tx/${pollingTransactionHash}`,
+                  '_blank'
+                );
+              }}>
+              View on Finder
+            </Button>
           </Box>
         </Box>
-        <Box mt="16px">
-          <StyledSlider
-            value={Number(lockAmount)}
-            setValue={(val) => updateLockAmount(val)}
-            maxValue={xAstroBalance}
-            maxString="Max"
-          />
-        </Box>
-      </Box>
-      <Box className="panel" mt="16px" p="24px">
-        <p className="color-primary">Lock Period</p>
-        <Grid mt={0.5} container spacing={2} alignItems="center">
-          <Grid item xs={12} sm={6}>
-            <p className="color-secondary">
-              The longer you lock, the more APOLLO rewards you will receive.
-            </p>
-          </Grid>
-          <Grid item xs={12} sm={6}>
-            <Box className="panel1" py="8px" px="12px">
+      ) : (
+        <>
+          <Box className="panel">
+            <Box p="16px">
+              <Box className="backIcon" onClick={onClose}>
+                <ChevronLeftIcon fontSize={28} />
+              </Box>
+              <Box textAlign="center">
+                <h6 className="color-primary obviouslyFont">Lock xASTRO</h6>
+              </Box>
+            </Box>
+            <Box h={1} className="border" />
+            <Box p="24px">
+              <p className="color-secondary">
+                Select how much xASTRO you want to deposit into Apollo’s xASTRO
+                Lockdrop and how long you would like to lock it. Note that once
+                Stage 2 begins (Day 6) you will not be able to make any xASTRO
+                deposits into the Lockdrop.
+              </p>
+            </Box>
+          </Box>
+          <Box className="panel" mt="16px" p="24px">
+            <Box
+              display="flex"
+              alignItems="center"
+              justifyContent="space-between">
+              <p className="color-primary">Lock Up</p>
+              <p className="color-secondary">
+                In wallet:{' '}
+                <span
+                  className="color-link"
+                  style={{ cursor: 'pointer' }}
+                  onClick={() => updateLockAmount(xAstroBalance)}>
+                  {xAstroBalance}
+                </span>
+              </p>
+            </Box>
+            <Box
+              py="8px"
+              px="12px"
+              mt="12px"
+              display="flex"
+              alignItems="center"
+              className="panel1 bg-main">
               <Box display="flex" alignItems="center">
+                <Image src="/xastro.png" width={30} />
+                <Box ml="6px">
+                  <h5 className="color-primary">xASTRO</h5>
+                </Box>
+              </Box>
+              <Box flex={1} textAlign="right">
                 <NumericalInput
                   placeholder=""
                   value={lockPeriod}
                   disabled
                   onUserInput={(val: any) => {
-                    setLockPeriod(val);
+                    updateLockAmount(val);
                   }}
                 />
-                <Box ml="6px">
-                  <h5 className="color-secondary">WEEKS</h5>
-                </Box>
+                <small className="color-secondary">
+                  {new Intl.NumberFormat('en-US', {
+                    style: 'currency',
+                    currency: 'USD'
+                  }).format(depositTotal)}
+                </small>
               </Box>
+            </Box>
+            <Box mt="16px">
+              <StyledSlider
+                value={Number(lockAmount)}
+                setValue={(val) => updateLockAmount(val)}
+                maxValue={xAstroBalance}
+                maxString="Max"
+              />
+            </Box>
+          </Box>
+          <Box className="panel" mt="16px" p="24px">
+            <p className="color-primary">Lock Period</p>
+            <Grid mt={0.5} container spacing={2} alignItems="center">
+              <Grid item xs={12} sm={6}>
+                <p className="color-secondary">
+                  The longer you lock, the more APOLLO rewards you will receive.
+                </p>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <Box className="panel1" py="8px" px="12px">
+                  <Box display="flex" alignItems="center">
+                    <NumericalInput
+                      placeholder=""
+                      value={lockPeriod}
+                      onUserInput={(val: any) => {
+                        setLockPeriod(val);
+                      }}
+                    />
+                    <Box ml="6px">
+                      <h5 className="color-secondary">WEEKS</h5>
+                    </Box>
+                  </Box>
 
-              {/* // todo - update date with weeks value
+                  {/* // todo - update date with weeks value
               <Box textAlign="right">
                 <small className="color-secondary">August 1, 2012</small>
               </Box> */}
+                </Box>
+              </Grid>
+            </Grid>
+            <Box mt="16px">
+              <StyledSlider
+                value={Number(lockPeriod)}
+                setValue={(val) => setLockPeriod(val)}
+                maxValue={52}
+                step={13}
+                symbol="Weeks"
+                // pointValues={['0 Months', '6 Months', '12 Months']}
+              />
             </Box>
+          </Box>
+          <Grid
+            container
+            mt="16px"
+            py="12px"
+            px="24px"
+            className="panel1 bg-main">
+            <Grid item xs={12} sm={6}>
+              <Box display="flex" alignItems="center">
+                <Image src="/apollo.png" width={20} />
+                <Box ml="6px">
+                  <p className="color-primary">{apolloRewardsAmount()}</p>
+                </Box>
+              </Box>
+              <small className="color-secondary">Est. APOLLO Rewards</small>
+            </Grid>
+            <Grid item container xs={12} sm={6}>
+              {!isMobile && <Box width="1px" className="border" />}
+              <Box mt={isMobile ? '12px' : 0} ml={isMobile ? 0 : '16px'}>
+                <p className="color-primary">{percentageOfRewards()}</p>
+                <small className="color-secondary">
+                  Est. % of Lockdrop Rewards
+                </small>
+              </Box>
+            </Grid>
           </Grid>
-        </Grid>
-        <Box mt="16px">
-          <StyledSlider
-            value={Number(lockPeriod)}
-            setValue={(val) => setLockPeriod(val)}
-            maxValue={52}
-            step={13}
-            symbol="Weeks"
-            // pointValues={['0 Months', '6 Months', '12 Months']}
-          />
-        </Box>
-      </Box>
-      <Grid container mt="16px" py="12px" px="24px" className="panel1 bg-main">
-        <Grid item xs={12} sm={6}>
-          <Box display="flex" alignItems="center">
-            <Image src="/apollo.png" width={20} />
-            <Box ml="6px">
-              <p className="color-primary">{apolloRewardsAmount()}</p>
+          <Box textAlign="center" mt="16px">
+            <Button
+              maxWidth={156}
+              width="100%"
+              borderRadius={15}
+              height={45}
+              fontSize={13}
+              fontFamily="Obviously, sans-serif"
+              backgroundColor={lockDisabled ? buttonGrey : gold}
+              color={almostBlack}
+              sx={{
+                '&:hover': {
+                  backgroundColor: lockDisabled ? buttonGrey : gold,
+                  color: white95
+                }
+              }}
+              disabled={lockDisabled}
+              onClick={handleLockxAstro}>
+              Lock xASTRO
+            </Button>
+            {lockDisabledMessage && (
+              <Box mt="8px" sx={{ color: red }}>
+                {{ lockDisabledMessage }}
+              </Box>
+            )}
+            <Box mt="8px">
+              <small className="color-secondary">TX Fee: 0.25 UST</small>
             </Box>
           </Box>
-          <small className="color-secondary">Est. APOLLO Rewards</small>
-        </Grid>
-        <Grid item container xs={12} sm={6}>
-          {!isMobile && <Box width="1px" className="border" />}
-          <Box mt={isMobile ? '12px' : 0} ml={isMobile ? 0 : '16px'}>
-            <p className="color-primary">{percentageOfRewards()}</p>
-            <small className="color-secondary">
-              Est. % of Lockdrop Rewards
-            </small>
-          </Box>
-        </Grid>
-      </Grid>
-      <Box textAlign="center" mt="16px">
-        <Button
-          maxWidth={156}
-          width="100%"
-          borderRadius={15}
-          height={45}
-          fontSize={13}
-          fontFamily="Obviously, sans-serif"
-          backgroundColor={lockDisabled ? buttonGrey : gold}
-          color={almostBlack}
-          sx={{
-            '&:hover': {
-              backgroundColor: lockDisabled ? buttonGrey : gold,
-              color: white95
-            }
-          }}
-          disabled={lockDisabled}
-          onClick={handleLockxAstro}>
-          Lock xASTRO
-        </Button>
-        {lockDisabledMessage && (
-          <Box mt="8px" sx={{ color: red }}>
-            {{ lockDisabledMessage }}
-          </Box>
-        )}
-        <Box mt="8px">
-          <small className="color-secondary">TX Fee: 0.25 UST</small>
-        </Box>
-      </Box>
+        </>
+      )}
     </Modal>
   );
 };

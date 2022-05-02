@@ -20,10 +20,22 @@ import Snackbar from '@mui/material/Snackbar';
 import { snackBarState } from '../../data/snackBar';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import Button from '@mui/material/Button';
+import networks, {
+  isSupportedNetwork,
+  SupportedNetwork
+} from '../../store/networks';
+import { networkNameState } from '../../data/network';
+import { white95 } from 'theme/mui-theme';
+import AlertTitle from '@mui/material/AlertTitle';
 
 const Phase2 = () => {
   const { open, message, severity, link } = useRecoilValue(snackBarState);
   const setSnackBarState = useSetRecoilState(snackBarState);
+
+  let networkName = useRecoilValue(networkNameState);
+  if (!networkName || !isSupportedNetwork(networkName)) {
+    networkName = 'mainnet';
+  }
 
   return (
     <Container>
@@ -38,9 +50,21 @@ const Phase2 = () => {
           <Alert
             severity={severity}
             variant={'filled'}
+            sx={{
+              fontSize: '14px',
+              fontWeight: '400'
+            }}
             action={
               link && (
-                <Button size={'small'} href={`#`} target={'_blank'}>
+                <Button
+                  size={'small'}
+                  sx={{
+                    color: white95,
+                    padding: '12px',
+                    height: '32px'
+                  }}
+                  href={`https://finder.extraterrestrial.money/${networkName}/tx/${link}`}
+                  target={'_blank'}>
                   View On Finder
                 </Button>
               )
