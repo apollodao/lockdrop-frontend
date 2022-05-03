@@ -346,7 +346,7 @@ const LockAstroModal: FC<Props> = ({ isOpen, onClose }) => {
               <br />
               <p className="color-secondary">
                 Deposit xAstro or Astro. Astro will be converted into xAstro
-                upon deposit.
+                upon deposit. All withdrawals will be in xAstro.
               </p>
             </Box>
           </Box>
