@@ -86,7 +86,6 @@ const WithdrawAstroModal: FC<Props> = ({
           lcdClient.tx
             .txInfo(response.result.txhash)
             .then((result: any) => {
-              console.log('it worked', result);
               stopPolling = true;
               if (result.raw_log.indexOf('failed') >= 0) {
                 setSnackBarState({

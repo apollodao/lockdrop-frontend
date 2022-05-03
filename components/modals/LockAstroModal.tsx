@@ -41,6 +41,7 @@ const LockAstroModal: FC<Props> = ({ isOpen, onClose }) => {
 
   const [lockAmount, setLockAmount] = useState(0);
   const [lockPeriod, setLockPeriod] = useState(0);
+  const [totalWeightedSum, setTotalWeightedSum] = useState(0);
   const [astroPrice, setAstroPrice] = useState(0);
   const [xAstroPrice, setXAstroPrice] = useState(0);
   const [depositTotal, setDepositTotal] = useState(0);
@@ -105,11 +106,27 @@ const LockAstroModal: FC<Props> = ({ isOpen, onClose }) => {
     }
   }, []);
 
+  // get lockdrop info
+  const getLockdropInfo = useCallback(async () => {
+    try {
+      const { weighted_amount } = await queryTotalLockdropInfo();
+      setTotalWeightedSum(parseInt(weighted_amount));
+    } catch (e) {
+      setSnackBarState({
+        severity: 'error',
+        message: `Error fetching lockdrop info. ${e}`,
+        open: true
+      });
+      console.error(e);
+    }
+  }, []);
+
   useEffect(() => {
     (async () => {
       if (userWalletAddr) {
         getUserxAstroBalance();
         getTokenPrices();
+        getLockdropInfo();
       }
     })();
   }, [userWalletAddr]);
@@ -169,9 +186,10 @@ const LockAstroModal: FC<Props> = ({ isOpen, onClose }) => {
     }
   };
 
-  // todo - check the math here
-  const percentageOfRewards = useCallback(() => {
+  // calculate rewards
+  const calculateRewards = (): number => {
     let multiplier = 1;
+
     if (lockPeriod >= 52) {
       multiplier = 6.9;
     } else if (lockPeriod >= 39) {
@@ -179,7 +197,16 @@ const LockAstroModal: FC<Props> = ({ isOpen, onClose }) => {
     } else if (lockPeriod >= 26) {
       multiplier = 2.4;
     }
-    let rewards = (lockAmount * multiplier) / TOTAL_APOLLO_REWARDS;
+    const boosted_sum = lockAmount * 1000000 * multiplier;
+    const apollo_rewards =
+      (boosted_sum * 5000000) / (totalWeightedSum + boosted_sum);
+
+    return apollo_rewards;
+  };
+
+  // calculate and format percentage of rewards
+  const percentageOfRewards = useCallback(() => {
+    let rewards = calculateRewards() / TOTAL_APOLLO_REWARDS;
 
     if (rewards < 0.0001) {
       return '< .01%';
@@ -188,21 +215,9 @@ const LockAstroModal: FC<Props> = ({ isOpen, onClose }) => {
     return (rewards * 100).toFixed(2) + '%';
   }, [lockAmount, lockPeriod]);
 
-  // todo - check the math here
+  // format rewards
   const apolloRewardsAmount = useCallback(() => {
-    let multiplier = 1;
-
-    if (lockPeriod >= 52) {
-      multiplier = 6.9;
-    } else if (lockPeriod >= 39) {
-      multiplier = 4.2;
-    } else if (lockPeriod >= 26) {
-      multiplier = 2.4;
-    }
-
-    let rewards = lockAmount * multiplier;
-
-    return rewards.toFixed(2);
+    return calculateRewards().toFixed(2);
   }, [lockAmount, lockPeriod]);
 
   return (
@@ -375,7 +390,7 @@ const LockAstroModal: FC<Props> = ({ isOpen, onClose }) => {
               />
             </Box>
           </Box>
-          {/* <Grid
+          <Grid
             container
             mt="16px"
             py="12px"
@@ -399,7 +414,7 @@ const LockAstroModal: FC<Props> = ({ isOpen, onClose }) => {
                 </small>
               </Box>
             </Grid>
-          </Grid> */}
+          </Grid>
           <Box textAlign="center" mt="16px">
             <Button
               maxWidth={156}
