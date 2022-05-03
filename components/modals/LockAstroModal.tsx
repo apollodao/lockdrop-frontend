@@ -57,7 +57,10 @@ const LockAstroModal: FC<Props> = ({ isOpen, onClose }) => {
   const setTransactionState = useSetRecoilState(txState);
 
   const lockDisabled =
-    lockAmount <= 0 || lockPeriod <= 0 || lockAmount > xAstroBalance;
+    lockAmount <= 0 ||
+    lockPeriod <= 0 ||
+    (inputAsset === 'xAstro' && lockAmount > xAstroBalance) ||
+    (inputAsset === 'astro' && lockAmount > astroBalance);
 
   const { breakpoints } = useTheme();
   const isMobile = useMediaQuery(breakpoints.down('sm'));
