@@ -343,6 +343,11 @@ const LockAstroModal: FC<Props> = ({ isOpen, onClose }) => {
                 Stage 2 begins (Day 6) you will not be able to make any xASTRO
                 deposits into the Lockdrop.
               </p>
+              <br />
+              <p className="color-secondary">
+                Deposit xAstro or Astro. Astro will be converted into xAstro
+                upon deposit.
+              </p>
             </Box>
           </Box>
           <Box className="panel" mt="16px" p="24px">
