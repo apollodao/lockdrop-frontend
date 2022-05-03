@@ -201,6 +201,15 @@ export const useLockdrop = (contractAddress?: AccAddress) => {
     });
   };
 
+  // get Astro token balance from the xAstro contract
+  const queryWalletAstroBalance: any = async (
+    userWalletAddress: AccAddress
+  ): Promise<TxResult> => {
+    return lcdClient.wasm.contractQuery(astroTokenAddress, {
+      balance: { address: userWalletAddress }
+    });
+  };
+
   // get user's lockdrop info
   const queryUserLockdropInfo: any = async (
     userWalletAddress: AccAddress
@@ -246,6 +255,7 @@ export const useLockdrop = (contractAddress?: AccAddress) => {
     executeDepositAsset,
     executeWithdrawAsset,
     queryWalletxAstroBalance,
+    queryWalletAstroBalance,
     queryUserLockdropInfo,
     queryTotalLockdropInfo,
     queryPrices
