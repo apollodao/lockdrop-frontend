@@ -197,6 +197,7 @@ const LockAstroModal: FC<Props> = ({ isOpen, onClose }) => {
     } else if (lockPeriod >= 26) {
       multiplier = 2.4;
     }
+
     const boosted_sum = lockAmount * 1000000 * multiplier;
     const apollo_rewards =
       (boosted_sum * 5000000) / (totalWeightedSum + boosted_sum);
@@ -212,12 +213,12 @@ const LockAstroModal: FC<Props> = ({ isOpen, onClose }) => {
       return '< .01%';
     }
 
-    return (rewards * 100).toFixed(2) + '%';
+    return (rewards * 100 || 0).toFixed(2) + '%';
   }, [lockAmount, lockPeriod]);
 
   // format rewards
   const apolloRewardsAmount = useCallback(() => {
-    return calculateRewards().toFixed(2);
+    return (calculateRewards() || 0).toFixed(2);
   }, [lockAmount, lockPeriod]);
 
   return (

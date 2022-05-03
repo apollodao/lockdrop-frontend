@@ -44,7 +44,7 @@ const ApolloFormattedStatistic: FC<Props> = ({
         end={value}
         separator=","
         decimals={decimals}
-        duration={3}
+        duration={1}
         suffix={percentage ? '%' : ''}
       />
       {/* <span style={{ fontSize: fontSize, marginRight: '8px' }}>
