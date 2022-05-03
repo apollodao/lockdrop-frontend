@@ -18,36 +18,6 @@ import { addressState } from '../data/wallet';
 import useFee from './useFee';
 import axios from 'axios';
 
-// an example hook for a contract.
-// e.g. cw3
-// Todo: replace message types (currently any) with real types.
-// replace useContract with contract name/type.
-// add executions using execute template.
-// add queries using query template.
-
-// From lockdrop integration test:
-//
-// executions:
-// 1. Deposit 1000000 Astro into Astroport Staking for 1000000 xAstro with Wallet 1 - astroportStaking.enterAstroToken('1000000', astroToken)
-// 2. Deposit 1000000 xAstro for 52 weeks with Wallet 1 - apollo.lockdrop.depositAsset('1000000', 52, xAstroToken)
-// 3. Deposit 1000000 Astro for 26 weeks with Wallet 1 - apollo.lockdrop.depositAstroAndIncreaseLockup('1000000', 26, xAstroToken)
-//
-// queries:
-// 1.  Wallet 1 Lockup Positions - apollo.lockdrop.getUserInfo - wallet.key.accAddress contracts.astroport.xastroToken
-//   assert(wallet1Query.lockup_positions_index == 1); // Check that there is 1 lockup position
-//   assert(wallet1Query.lockup_infos[0].units_locked == '1000000'); // Check that the lockup position has 1000000 xAstro locked
-//   assert(wallet1Query.lockup_infos[0].weighted_sum == '6900000'); // Check that the lockdrop position has 6900000 apAstro
-//
-// 2.  'Wallet 1 query after second deposit using astro token as deposit' - apollo.lockdrop.getUserInfo - wallet.key.accAddress contracts.astroport.xastroToken
-//     assert(userQueryAfter2ndDeposit.lockup_positions_index == 2); // Check that there are 2 lockup positions
-//     assert(userQueryAfter2ndDeposit.lockup_infos[0].units_locked == '1000000'); // Check that the second lockup position has 1000000 xAstro locked
-//     assert(userQueryAfter2ndDeposit.lockup_infos[0].weighted_sum == '2400000'); // Check that the second lockup position has 2400000 apAstro
-//
-// tests:
-// 1.'Deposit 1000000 Astro into Astroport Staking for 1000000 xAstro with Wallet 1'
-// 2.'Deposit 1000000 Astro for 26 weeks with Wallet 1'
-//
-
 // the official start date and time in utc
 const LOCKDROP_START_DATE = Date.UTC(2022, 4, 2, 0, 0, 0);
 
@@ -68,7 +38,6 @@ export const useLockdrop = (contractAddress?: AccAddress) => {
   const fee = useFee();
   const userWalletAddr = useRecoilValue(addressState);
   const lcdClient = useRecoilValue(lcdClientQuery);
-
 
   // implement logic to provide helpers for phase start and end dates
   const buildLockdropDateConfig: any = async (startDate: Date) => {
@@ -92,11 +61,11 @@ export const useLockdrop = (contractAddress?: AccAddress) => {
     };
     config.endDate = new Date(
       config.startDate.getTime() +
-      config.phases.reduce((acc, phase) => acc + phase.duration, 0) *
-      24 *
-      60 *
-      60 *
-      1000
+        config.phases.reduce((acc, phase) => acc + phase.duration, 0) *
+          24 *
+          60 *
+          60 *
+          1000
     );
 
     // current stage logic
@@ -157,15 +126,15 @@ export const useLockdrop = (contractAddress?: AccAddress) => {
         msg: createHookMsg(
           deposit_token === 'xastro'
             ? {
-              increase_lockup: {
-                duration
+                increase_lockup: {
+                  duration
+                }
               }
-            }
             : {
-              stake_astro_and_increase_lockup: {
-                duration
+                stake_astro_and_increase_lockup: {
+                  duration
+                }
               }
-            }
         )
       }
     };
