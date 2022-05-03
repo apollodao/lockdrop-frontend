@@ -72,6 +72,19 @@ const LockAstroModal: FC<Props> = ({ isOpen, onClose }) => {
     queryPrices
   } = useLockdrop();
 
+  // // return input asset attribute
+  // todo: replace inline asset checks with lookup
+  // const getInputAssetAttribute = (setting: 'price' | 'balance' | 'toLower') => {
+  //   switch (setting) {
+  //     case 'price':
+  //       return inputAsset === 'xAstro' ? xAstroPrice : astroPrice;
+  //     case 'balance':
+  //       return inputAsset === 'xAstro' ? xAstroBalance : astroBalance;
+  //     case 'toLower':
+  //       return inputAsset === 'xAstro' ? 'xastro' : 'astro';
+  //   }
+  // };
+
   // handle lock amount update
   const updateLockAmount = (amount: number) => {
     setLockAmount(amount);
@@ -409,7 +422,9 @@ const LockAstroModal: FC<Props> = ({ isOpen, onClose }) => {
               <StyledSlider
                 value={Number(lockAmount)}
                 setValue={(val) => updateLockAmount(val)}
-                maxValue={xAstroBalance}
+                maxValue={
+                  inputAsset === 'xAstro' ? xAstroBalance : astroBalance
+                }
                 maxString="Max"
               />
             </Box>
