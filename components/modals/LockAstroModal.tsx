@@ -46,6 +46,8 @@ const LockAstroModal: FC<Props> = ({ isOpen, onClose }) => {
   const [xAstroPrice, setXAstroPrice] = useState(0);
   const [depositTotal, setDepositTotal] = useState(0);
   const [xAstroBalance, setxAstroBalance] = useState(0);
+  const [astroBalance, setAstroBalance] = useState(0);
+  const [inputAsset, setInputAsset] = useState('xAstro');
   const [lockDisabledMessage, setLockDisabledMessage] = useState('');
   const [pollingTransactionHash, setPollingTransactionHash] = useState('');
 
@@ -55,7 +57,10 @@ const LockAstroModal: FC<Props> = ({ isOpen, onClose }) => {
   const setTransactionState = useSetRecoilState(txState);
 
   const lockDisabled =
-    lockAmount <= 0 || lockPeriod <= 0 || lockAmount > xAstroBalance;
+    lockAmount <= 0 ||
+    lockPeriod <= 0 ||
+    (inputAsset === 'xAstro' && lockAmount > xAstroBalance) ||
+    (inputAsset === 'astro' && lockAmount > astroBalance);
 
   const { breakpoints } = useTheme();
   const isMobile = useMediaQuery(breakpoints.down('sm'));
@@ -64,15 +69,32 @@ const LockAstroModal: FC<Props> = ({ isOpen, onClose }) => {
   const {
     executeDepositAsset,
     queryWalletxAstroBalance,
+    queryWalletAstroBalance,
     queryUserLockdropInfo,
     queryTotalLockdropInfo,
     queryPrices
   } = useLockdrop();
 
+  // // return input asset attribute
+  // todo: replace inline asset checks with lookup
+  // const getInputAssetAttribute = (setting: 'price' | 'balance' | 'toLower') => {
+  //   switch (setting) {
+  //     case 'price':
+  //       return inputAsset === 'xAstro' ? xAstroPrice : astroPrice;
+  //     case 'balance':
+  //       return inputAsset === 'xAstro' ? xAstroBalance : astroBalance;
+  //     case 'toLower':
+  //       return inputAsset === 'xAstro' ? 'xastro' : 'astro';
+  //   }
+  // };
+
   // handle lock amount update
   const updateLockAmount = (amount: number) => {
     setLockAmount(amount);
-    setDepositTotal(amount * xAstroPrice);
+
+    setDepositTotal(
+      inputAsset === 'xAstro' ? amount * xAstroPrice : amount * astroPrice
+    );
   };
 
   // get the user's xAstro balance
@@ -84,6 +106,21 @@ const LockAstroModal: FC<Props> = ({ isOpen, onClose }) => {
       setSnackBarState({
         severity: 'error',
         message: `Error getting user xAstro balance`,
+        open: true
+      });
+      console.error(e);
+    }
+  }, []);
+
+  // get the user's Astro balance
+  const getUserAstroBalance = useCallback(async () => {
+    try {
+      const { balance } = await queryWalletAstroBalance(userWalletAddr);
+      setAstroBalance(balance / 1000000);
+    } catch (e) {
+      setSnackBarState({
+        severity: 'error',
+        message: `Error getting user Astro balance`,
         open: true
       });
       console.error(e);
@@ -125,17 +162,24 @@ const LockAstroModal: FC<Props> = ({ isOpen, onClose }) => {
     (async () => {
       if (userWalletAddr) {
         getUserxAstroBalance();
+        getUserAstroBalance();
         getTokenPrices();
         getLockdropInfo();
       }
     })();
   }, [userWalletAddr]);
 
+  // handle input asset change
+  const handleInputAssetChange = (inputAsset: 'Astro' | 'xAstro') => {
+    updateLockAmount(0);
+    setInputAsset(inputAsset);
+  };
+
   // call the contract to lock the xastro
   const handleLockxAstro = async () => {
     try {
       const response = await executeDepositAsset(
-        'xastro',
+        inputAsset === 'xAstro' ? 'xastro' : 'astro',
         lockAmount * 1000000,
         lockPeriod
       );
@@ -186,7 +230,7 @@ const LockAstroModal: FC<Props> = ({ isOpen, onClose }) => {
     }
   };
 
-  // calculate rewards
+  // calculate rewards - if astro is selected, convert to xastro and calculate
   const calculateRewards = (): number => {
     let multiplier = 1;
 
@@ -198,7 +242,13 @@ const LockAstroModal: FC<Props> = ({ isOpen, onClose }) => {
       multiplier = 2.4;
     }
 
-    const boosted_sum = lockAmount * 1000000 * multiplier;
+    let lockAmountInXAstro = lockAmount;
+
+    if (inputAsset === 'Astro') {
+      lockAmountInXAstro = (lockAmount * astroPrice) / xAstroPrice;
+    }
+
+    const boosted_sum = lockAmountInXAstro * 1000000 * multiplier;
     const apollo_rewards =
       (boosted_sum * 5000000) / (totalWeightedSum + boosted_sum);
 
@@ -300,14 +350,45 @@ const LockAstroModal: FC<Props> = ({ isOpen, onClose }) => {
               display="flex"
               alignItems="center"
               justifyContent="space-between">
-              <p className="color-primary">Lock Up</p>
+              <Box
+                display={'flex'}
+                alignItems={'center'}
+                justifyContent={'space-between'}>
+                <p className="color-primary">Lock Up:</p>
+                <Box
+                  display={'flex'}
+                  alignItems={'center'}
+                  justifyContent={'space-between'}
+                  ml={8}>
+                  <p
+                    className="color-link"
+                    style={{ cursor: 'pointer' }}
+                    onClick={() => handleInputAssetChange('xAstro')}>
+                    xAstro
+                  </p>
+                  <span className="color-secondary" style={{ margin: '0 4px' }}>
+                    {' '}
+                    -{' '}
+                  </span>
+                  <p
+                    className="color-link"
+                    style={{ cursor: 'pointer' }}
+                    onClick={() => handleInputAssetChange('Astro')}>
+                    Astro
+                  </p>
+                </Box>
+              </Box>
               <p className="color-secondary">
                 In wallet:{' '}
                 <span
                   className="color-link"
                   style={{ cursor: 'pointer' }}
-                  onClick={() => updateLockAmount(xAstroBalance)}>
-                  {xAstroBalance}
+                  onClick={() =>
+                    updateLockAmount(
+                      inputAsset === 'xAstro' ? xAstroBalance : astroBalance
+                    )
+                  }>
+                  {inputAsset === 'xAstro' ? xAstroBalance : astroBalance}
                 </span>
               </p>
             </Box>
@@ -319,9 +400,9 @@ const LockAstroModal: FC<Props> = ({ isOpen, onClose }) => {
               alignItems="center"
               className="panel1 bg-main">
               <Box display="flex" alignItems="center">
-                <Image src="/xastro.png" width={30} />
+                <Image src={`/${inputAsset.toLowerCase()}.png`} width={30} />
                 <Box ml="6px">
-                  <h5 className="color-primary">xASTRO</h5>
+                  <h5 className="color-primary">{inputAsset}</h5>
                 </Box>
               </Box>
               <Box flex={1} textAlign="right">
@@ -344,7 +425,9 @@ const LockAstroModal: FC<Props> = ({ isOpen, onClose }) => {
               <StyledSlider
                 value={Number(lockAmount)}
                 setValue={(val) => updateLockAmount(val)}
-                maxValue={xAstroBalance}
+                maxValue={
+                  inputAsset === 'xAstro' ? xAstroBalance : astroBalance
+                }
                 maxString="Max"
               />
             </Box>
@@ -416,7 +499,7 @@ const LockAstroModal: FC<Props> = ({ isOpen, onClose }) => {
               </Box>
             </Grid>
           </Grid>
-          <Box textAlign="center" mt="16px">
+          <Box textAlign="center" mt="16px" pb={32}>
             <Button
               maxWidth={156}
               width="100%"
@@ -434,7 +517,7 @@ const LockAstroModal: FC<Props> = ({ isOpen, onClose }) => {
               }}
               disabled={lockDisabled}
               onClick={handleLockxAstro}>
-              Lock xASTRO
+              Lock {inputAsset}
             </Button>
             {lockDisabledMessage && (
               <Box mt="8px" sx={{ color: red }}>

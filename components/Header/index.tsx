@@ -40,7 +40,14 @@ const Header: React.FC = () => {
   return (
     <Box className={styles.header}>
       <Box display="flex" alignItems="center">
-        <Image src="/logo-apollo.svg" alt="Apollo Logo" />
+        <Image
+          onClick={() => {
+            window.open(`https://apollo.farm`, '_blank');
+          }}
+          style={{ cursor: 'pointer' }}
+          src="/logo-apollo.svg"
+          alt="Apollo Logo"
+        />
         <Box display="flex" ml={1.5}>
           {menuItems.map((item, index) => (
             <Box
