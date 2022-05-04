@@ -1,6 +1,12 @@
 import React, { FC, useCallback, useState, useEffect } from 'react';
 import { Box, Image, Button } from '@chakra-ui/react';
-import { Grid, useTheme, useMediaQuery, CircularProgress } from '@mui/material';
+import {
+  Grid,
+  useTheme,
+  useMediaQuery,
+  CircularProgress,
+  Typography
+} from '@mui/material';
 import Modal from 'components/modals/MuiModal';
 import NumericalInput from 'components/NumericalInput';
 import StyledSlider from 'components/StyledSlider';
@@ -12,6 +18,7 @@ import { useLockdrop } from 'hooks/useLockdrop';
 import { snackBarState } from '../../data/snackBar';
 import { networkNameState, lcdClientQuery } from '../../data/network';
 import { isSupportedNetwork } from '../../store/networks';
+import { lockdropConfig } from '../../data/lockdropConfig';
 import { poll } from 'poll';
 import { txState } from '../../data/txState';
 
@@ -46,6 +53,7 @@ const WithdrawAstroModal: FC<Props> = ({
   const isMobile = useMediaQuery(breakpoints.down('sm'));
   const userWalletAddr: any = useRecoilValue(addressState);
   const [pollingTransactionHash, setPollingTransactionHash] = useState('');
+  const config = useRecoilValue(lockdropConfig);
 
   const setSnackBarState = useSetRecoilState(snackBarState);
 
@@ -53,6 +61,20 @@ const WithdrawAstroModal: FC<Props> = ({
   const setTransactionState = useSetRecoilState(txState);
 
   const withdrawDisabled = Number(withdrawAmount) <= 0;
+  let withdrawablePortionDay7 = 0;
+
+  // day six logic
+  if (config.currentDay === 6) {
+    amount *= 0.5;
+  }
+
+  // day 7 logic
+  if (config.currentDay === 7) {
+    withdrawablePortionDay7 =
+      (0.5 * (config.endDate.getTime() - new Date().getTime())) /
+      (1000 * 60 * 60 * 24);
+    amount = Math.round(amount * withdrawablePortionDay7 * 1000000) / 1000000;
+  }
 
   // handle withdraw amount update
   const updateWithdrawAmount = (amount: number) => {
@@ -197,7 +219,7 @@ const WithdrawAstroModal: FC<Props> = ({
                 <h6 className="color-primary obviouslyFont">Withdraw xASTRO</h6>
               </Box>
             </Box>
-            <Box h={1} className="border"></Box>
+            <Box h={1} className="border" />
             <Box p="24px">
               <p className="color-secondary">
                 Select how much xASTRO you want to withdraw from Apollo’s xASTRO
@@ -205,6 +227,23 @@ const WithdrawAstroModal: FC<Props> = ({
                 up to 50% of your xASTRO deposits. On day 7, withdrawal
                 allowance will fall linearly from 50% to 0%.
               </p>
+              {config.currentDay === 6 && (
+                <Typography color="gold" sx={{ pt: '10px' }}>
+                  The lockdrop is currently in day 6 and you can only withdraw
+                  up to 50% of your deposit.
+                </Typography>
+              )}
+              {config.currentDay === 7 && (
+                <Typography color="gold" sx={{ pt: '10px' }}>
+                  The lockdrop is currently in day 7 and you can only withdraw
+                  up to{' '}
+                  {withdrawablePortionDay7.toLocaleString(undefined, {
+                    style: 'percent',
+                    minimumFractionDigits: 2
+                  })}{' '}
+                  of your deposit.
+                </Typography>
+              )}
             </Box>
           </Box>
           <Box className="panel" mt="16px" p="24px">

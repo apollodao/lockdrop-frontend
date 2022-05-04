@@ -15,11 +15,10 @@ import { networkNameState } from '../data/network';
 import { TxResult, useWallet } from '@terra-money/wallet-provider';
 import { lcdClientQuery } from '../data/network';
 import { addressState } from '../data/wallet';
+import { lockdropConfig } from '../data/lockdropConfig';
 import useFee from './useFee';
 import axios from 'axios';
-
-// the official start date and time in utc
-const LOCKDROP_START_DATE = Date.UTC(2022, 4, 2, 0, 0, 0);
+import { useEffect } from 'react';
 
 export const useLockdrop = (contractAddress?: AccAddress) => {
   let networkName = useRecoilValue(networkNameState);
@@ -38,34 +37,50 @@ export const useLockdrop = (contractAddress?: AccAddress) => {
   const fee = useFee();
   const userWalletAddr = useRecoilValue(addressState);
   const lcdClient = useRecoilValue(lcdClientQuery);
+  const setLockdropConfig = useSetRecoilState(lockdropConfig);
 
   // implement logic to provide helpers for phase start and end dates
-  const buildLockdropDateConfig: any = async (startDate: Date) => {
+  const buildLockdropConfig: any = (contractInfo: any) => {
+    const {
+      init_timestamp,
+      deposit_window,
+      withdrawal_window
+    } = contractInfo;
+
+    let contractInitDate = new Date(init_timestamp * 1000);
     const currentDate = new Date();
+
+    // hardcode the official start date for testing, guard against it happening in prod
+    // if (window.location.href.indexOf('localhost') >= 0) {
+    //   contractInitDate = new Date(Date.UTC(2022, 3, 29, 0, 0, 0));
+    // }
+
+    // this is the primary place where the phases are defined based off of the incoming startDate that came from the contract itself
     const config = {
-      startDate: startDate,
+      startDate: contractInitDate,
       endDate: null,
       currentStage: 'pre',
+      currentDay: Math.ceil((currentDate.getTime() - contractInitDate.getTime()) / (1000 * 60 * 60 * 24)),
       phases: [
         {
           title: 'stage1',
-          startDate: startDate,
-          duration: 5
+          startDate: contractInitDate,
+          duration: deposit_window / (60 * 60 * 24)
         },
         {
           title: 'stage2',
-          startDate: new Date(startDate.getTime() + 5 * 24 * 60 * 60 * 1000),
-          duration: 2
+          startDate: new Date(contractInitDate.getTime() + 5 * 24 * 60 * 60 * 1000),
+          duration: withdrawal_window / (60 * 60 * 24)
         }
       ]
     };
     config.endDate = new Date(
       config.startDate.getTime() +
-        config.phases.reduce((acc, phase) => acc + phase.duration, 0) *
-          24 *
-          60 *
-          60 *
-          1000
+      config.phases.reduce((acc, phase) => acc + phase.duration, 0) *
+      24 *
+      60 *
+      60 *
+      1000
     );
 
     // current stage logic
@@ -78,6 +93,8 @@ export const useLockdrop = (contractAddress?: AccAddress) => {
       config.currentStage = 'post';
     }
 
+    console.log('got config', config);
+
     return config;
   };
 
@@ -88,14 +105,12 @@ export const useLockdrop = (contractAddress?: AccAddress) => {
     });
   };
 
-  // get the current lockdrop date config
-  const lockdropConfig: any = async () => {
-    try {
-      const config = await queryContractConfig();
-      return buildLockdropDateConfig(new Date(config.init_timestamp * 1000));
-    } catch (e) {
-      console.error('error getting contract config and start date', e);
-    }
+  // init lockdrop config
+  const initLockdropConfig: any = async () => {
+    const contractInfo = await queryContractConfig();
+    console.log('contract info', contractInfo);
+    const config = buildLockdropConfig(contractInfo);
+    setLockdropConfig(config);
   };
 
   // prepare execution
@@ -126,15 +141,15 @@ export const useLockdrop = (contractAddress?: AccAddress) => {
         msg: createHookMsg(
           deposit_token === 'xastro'
             ? {
-                increase_lockup: {
-                  duration
-                }
+              increase_lockup: {
+                duration
               }
+            }
             : {
-                stake_astro_and_increase_lockup: {
-                  duration
-                }
+              stake_astro_and_increase_lockup: {
+                duration
               }
+            }
         )
       }
     };
@@ -251,7 +266,7 @@ export const useLockdrop = (contractAddress?: AccAddress) => {
   };
 
   return {
-    lockdropConfig,
+    initLockdropConfig,
     executeDepositAsset,
     executeWithdrawAsset,
     queryWalletxAstroBalance,

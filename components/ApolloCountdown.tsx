@@ -4,10 +4,10 @@ import Countdown from 'react-countdown';
 import { makeStyles } from '@mui/styles';
 import { Theme } from '@mui/material/styles';
 import { orangeGoldGradientHorz } from '../theme/mui-theme';
-import Stack from '@mui/material/Stack';
 import Grid from '@mui/material/Grid';
-import { useLockdrop } from 'hooks/useLockdrop';
 import Box from '@mui/material/Box';
+import { lockdropConfig } from '../data/lockdropConfig';
+import { useRecoilValue } from 'recoil';
 
 type Props = {
   children?: ReactNode;
@@ -38,31 +38,27 @@ const useStyles: any = makeStyles((theme: Theme) => ({
 
 const ApolloCountdown: FC<Props> = ({}) => {
   const classes = useStyles();
-  const { lockdropConfig } = useLockdrop();
+  const config = useRecoilValue(lockdropConfig);
   const [countdownDate, setCountdownDate] = useState(null);
   const [title, setTitle] = useState('');
 
   useEffect(() => {
     (async () => {
-      const cfg = await lockdropConfig();
-      if (!cfg) {
-        return;
-      }
-      switch (cfg.currentStage) {
+      switch (config.currentStage) {
         case 'pre':
-          setCountdownDate(cfg.startDate);
+          setCountdownDate(config.startDate);
           setTitle('LOCKDROP BEGINS IN');
           break;
         case 'stage1':
-          setCountdownDate(cfg.phases[1].startDate);
+          setCountdownDate(config.phases[1].startDate);
           setTitle('STAGE 2 BEGINS IN');
           break;
         case 'stage2':
-          setCountdownDate(cfg.endDate);
+          setCountdownDate(config.endDate);
           setTitle('STAGE 2 ENDS IN');
           break;
         case 'post':
-          setCountdownDate(cfg.endDate);
+          setCountdownDate(config.endDate);
           setTitle('LOCKDROP HAS ENDED');
           break;
         default:
@@ -70,13 +66,13 @@ const ApolloCountdown: FC<Props> = ({}) => {
           break;
       }
     })();
-  }, []);
+  }, [config]);
 
   return (
     <>
       <Box mb={1}>
         <h6
-          title={lockdropConfig.stage}
+          title={config && config.stage}
           className="color-primary obviouslyFont">
           {title}
         </h6>
