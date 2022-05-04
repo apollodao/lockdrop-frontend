@@ -14,10 +14,17 @@ import { almostBlack, theme } from '../theme/mui-theme';
 import Header from 'components/Header';
 import whitelist from 'constants/whitelist.json';
 import { AstroAppProvider } from 'modules/common';
+import { useLockdrop } from 'hooks/useLockdrop';
 
 const RecoilInit = () => {
+  const { initLockdropConfig } = useLockdrop();
+
   useInitAddress();
   useInitNetwork();
+
+  // init lockdrop config by querying the contract
+  initLockdropConfig();
+
   return <></>;
 };
 

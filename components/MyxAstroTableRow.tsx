@@ -10,7 +10,8 @@ import {
   gold,
   buttonGrey,
   borderGrey,
-  white5
+  white5,
+  white60
 } from '../theme/mui-theme';
 import Typography from '@mui/material/Typography';
 import Image from 'next/image';
@@ -24,12 +25,14 @@ import { useRecoilValue } from 'recoil';
 import xastroIcon from '../public/xastro.png';
 import { txState } from '../data/txState';
 import Skeleton from '@mui/material/Skeleton';
+import { lockdropConfig } from '../data/lockdropConfig';
 
 type Props = {};
 
 const MyxAstroTableRow: FC<Props> = ({}: Props) => {
   const { breakpoints } = useTheme();
   const isMobile = useMediaQuery(breakpoints.down('md'));
+  const config = useRecoilValue(lockdropConfig);
 
   const [openLockModal, setOpenLockModal] = useState(false);
   const [openLockSuccessModal, setOpenLockSuccessModal] = useState(false);
@@ -227,7 +230,15 @@ const MyxAstroTableRow: FC<Props> = ({}: Props) => {
           <Button
             backgroundColor={gold}
             color={almostBlack}
+            disabled={config!.currentStage !== 'stage1'}
             label="Lock xASTRO"
+            style={{
+              '&:disabled': {
+                color: white60,
+                backgroundColor: buttonGrey,
+                cursor: 'not-allowed'
+              }
+            }}
             onClick={handleLockxAstro}
           />
         )}

@@ -12,7 +12,8 @@ import {
   darkGrey
 } from '../theme/mui-theme';
 import Grid from '@mui/material/Grid';
-import { useLockdrop } from 'hooks/useLockdrop';
+import { lockdropConfig } from '../data/lockdropConfig';
+import { useRecoilValue } from 'recoil';
 
 type Props = {
   borderColor?: string;
@@ -25,25 +26,22 @@ const useStyles: any = makeStyles((theme: Theme) => ({
 }));
 
 const ApolloStageIndicator: FC<Props> = ({ borderColor = darkGrey }) => {
-  const { lockdropConfig } = useLockdrop();
+  const config = useRecoilValue(lockdropConfig);
   const currentDate = new Date();
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
 
   useEffect(() => {
     (async () => {
-      const cfg = await lockdropConfig();
-      if (!cfg) {
-        return;
-      }
-      setStartDate(cfg.startDate);
-      setEndDate(cfg.endDate);
+      setStartDate(config.startDate);
+      setEndDate(config.endDate);
     })();
-  }, []);
+  }, [config]);
 
   const isToday = useCallback(
     (i) => {
       return (
+        startDate &&
         currentDate.getTime() > startDate.getTime() + i * 24 * 60 * 60 * 1000 &&
         currentDate.getTime() <
           startDate.getTime() + (i + 1) * 24 * 60 * 60 * 1000
@@ -181,12 +179,13 @@ const ApolloStageIndicator: FC<Props> = ({ borderColor = darkGrey }) => {
             variant="body2"
             color={white60}
             sx={{ fontSize: '12px', lineHeight: '16px' }}>
-            {startDate.toLocaleDateString('en-US', {
-              year: 'numeric',
-              month: 'short',
-              day: 'numeric',
-              timeZone: 'UTC'
-            })}
+            {startDate &&
+              startDate.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                timeZone: 'UTC'
+              })}
           </Typography>
         </Grid>
         <Grid
@@ -199,11 +198,12 @@ const ApolloStageIndicator: FC<Props> = ({ borderColor = darkGrey }) => {
             variant="body2"
             color={white60}
             sx={{ fontSize: '12px', lineHeight: '16px' }}>
-            {endDate.toLocaleDateString('en-US', {
-              year: 'numeric',
-              month: 'short',
-              day: 'numeric'
-            })}
+            {endDate &&
+              endDate.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+              })}
           </Typography>
         </Grid>
       </Grid>
