@@ -22,7 +22,7 @@ const LockdropPageHeader: FC<Props> = ({}) => {
         sm={12}
         textAlign={isMobile ? 'center' : 'left'}>
         <Typography variant="subtitle1" sx={{ mb: '10px' }}>
-          STAGE I
+          ENDED
         </Typography>
         <Typography variant="body1" color={white60}>
           The Apollo xAstro Lockdrop is now closed, thank you for all the
