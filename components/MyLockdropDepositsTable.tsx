@@ -61,6 +61,8 @@ const MyLockdropDepositsTable: FC<Props> = () => {
       title="My Lockdrop Deposits"
       titleFontVariant="body2"
       padding={0}
+      linkText="Collect Apollo Rewards"
+      linkUrl="https://app.apollo.farm/rewards"
       style={{ width: '100%' }}>
       {!isMobile && <MyLockdropDepositsHeader />}
       {!userWalletAddr && (

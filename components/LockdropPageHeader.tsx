@@ -25,9 +25,10 @@ const LockdropPageHeader: FC<Props> = ({}) => {
           STAGE I
         </Typography>
         <Typography variant="body1" color={white60}>
-          During Stage 1 (Day 1-5) there are no limits on deposits and
-          withdrawals of xASTRO. Once Stage 2 (Day 6) begins you will only be
-          able to withdraw xASTRO.
+          The Apollo xAstro Lockdrop is now closed, thank you for all the
+          support. You will be able to claim your Apollo rewards on this page
+          and in the Rewards tab. Once your Lock Period ends, you will be able
+          to claim your apAstro in return for the deposited xAstro.
         </Typography>
       </Grid>
       <Grid item lg={4} md={4} xs={12} sm={12} textAlign="center">

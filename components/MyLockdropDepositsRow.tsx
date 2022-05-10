@@ -4,7 +4,13 @@ import ApolloCardHeader from './ApolloCardHeader';
 import ApolloCardBody from './ApolloCardBody';
 import ExternalLinkIcon from './icons/ExternalLinkIcon';
 import Grid from '@mui/material/Grid';
-import { borderGrey, white5, white60, white95 } from '../theme/mui-theme';
+import {
+  borderGrey,
+  buttonGrey,
+  white5,
+  white60,
+  white95
+} from '../theme/mui-theme';
 import apolloIcon from '../public/apollo.svg';
 import Button from './Button';
 import Image from 'next/image';
@@ -214,8 +220,15 @@ const MyLockdropDepositsRow: FC<Props> = ({
           />
         ) : (
           <Button
+            style={{
+              '&:disabled': {
+                color: white60,
+                backgroundColor: buttonGrey,
+                cursor: 'not-allowed'
+              }
+            }}
             label="Withdraw"
-            disabled={withdrawal_flag}
+            disabled={true}
             onClick={handleWithdraw}
           />
         )}
