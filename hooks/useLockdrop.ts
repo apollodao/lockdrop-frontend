@@ -41,11 +41,7 @@ export const useLockdrop = (contractAddress?: AccAddress) => {
 
   // implement logic to provide helpers for phase start and end dates
   const buildLockdropConfig: any = (contractInfo: any) => {
-    const {
-      init_timestamp,
-      deposit_window,
-      withdrawal_window
-    } = contractInfo;
+    const { init_timestamp, deposit_window, withdrawal_window } = contractInfo;
 
     let contractInitDate = new Date(init_timestamp * 1000);
     const currentDate = new Date();
@@ -60,7 +56,10 @@ export const useLockdrop = (contractAddress?: AccAddress) => {
       startDate: contractInitDate,
       endDate: null,
       currentStage: 'pre',
-      currentDay: Math.ceil((currentDate.getTime() - contractInitDate.getTime()) / (1000 * 60 * 60 * 24)),
+      currentDay: Math.ceil(
+        (currentDate.getTime() - contractInitDate.getTime()) /
+          (1000 * 60 * 60 * 24)
+      ),
       phases: [
         {
           title: 'stage1',
@@ -69,18 +68,20 @@ export const useLockdrop = (contractAddress?: AccAddress) => {
         },
         {
           title: 'stage2',
-          startDate: new Date(contractInitDate.getTime() + 5 * 24 * 60 * 60 * 1000),
+          startDate: new Date(
+            contractInitDate.getTime() + 5 * 24 * 60 * 60 * 1000
+          ),
           duration: withdrawal_window / (60 * 60 * 24)
         }
       ]
     };
     config.endDate = new Date(
       config.startDate.getTime() +
-      config.phases.reduce((acc, phase) => acc + phase.duration, 0) *
-      24 *
-      60 *
-      60 *
-      1000
+        config.phases.reduce((acc, phase) => acc + phase.duration, 0) *
+          24 *
+          60 *
+          60 *
+          1000
     );
 
     // current stage logic
@@ -92,8 +93,6 @@ export const useLockdrop = (contractAddress?: AccAddress) => {
     if (currentDate.getTime() > config.endDate.getTime()) {
       config.currentStage = 'post';
     }
-
-    console.log('got config', config);
 
     return config;
   };
@@ -108,7 +107,6 @@ export const useLockdrop = (contractAddress?: AccAddress) => {
   // init lockdrop config
   const initLockdropConfig: any = async () => {
     const contractInfo = await queryContractConfig();
-    console.log('contract info', contractInfo);
     const config = buildLockdropConfig(contractInfo);
     setLockdropConfig(config);
   };
@@ -141,15 +139,15 @@ export const useLockdrop = (contractAddress?: AccAddress) => {
         msg: createHookMsg(
           deposit_token === 'xastro'
             ? {
-              increase_lockup: {
-                duration
+                increase_lockup: {
+                  duration
+                }
               }
-            }
             : {
-              stake_astro_and_increase_lockup: {
-                duration
+                stake_astro_and_increase_lockup: {
+                  duration
+                }
               }
-            }
         )
       }
     };
