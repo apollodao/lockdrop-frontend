@@ -137,18 +137,13 @@ const MyLockdropDepositsRow: FC<Props> = ({
         ) : (
           <>
             <div style={{ marginBottom: '4px' }}>
-              {new Date(unlocksOn).toLocaleDateString('en-US', {
+              {new Date().toLocaleDateString('en-US', {
                 year: 'numeric',
                 month: 'short',
                 day: 'numeric',
                 timeZone: 'UTC'
               })}
             </div>
-            <Typography
-              sx={{ fontSize: '14px', fontWeight: 400 }}
-              color={white60}>
-              {daysUntilUnlock} days
-            </Typography>
           </>
         )}
       </Grid>
@@ -179,7 +174,7 @@ const MyLockdropDepositsRow: FC<Props> = ({
             </Grid>
             <Grid item>
               <ApolloFormattedStatistic
-                value={rewards}
+                value={0}
                 decimals={2}
                 fontSize="15px"
                 decimalsInGrey={true}
@@ -200,16 +195,7 @@ const MyLockdropDepositsRow: FC<Props> = ({
         md={3}
         mb={isMobile ? 2 : 0}
         textAlign={isMobile ? 'right' : 'left'}>
-        {loading ? (
-          <Skeleton variant="text" width="70%" />
-        ) : (
-          <>
-            {percentOfRewards.toLocaleString(undefined, {
-              style: 'percent',
-              minimumFractionDigits: 2
-            })}
-          </>
-        )}
+        {loading ? <Skeleton variant="text" width="70%" /> : <>0.00%</>}
       </Grid>
       <Grid item xs={12} sm={12} md={2} textAlign="right">
         {loading ? (
@@ -228,7 +214,7 @@ const MyLockdropDepositsRow: FC<Props> = ({
               }
             }}
             label="Withdraw"
-            disabled={true}
+            disabled={withdrawal_flag}
             onClick={handleWithdraw}
           />
         )}

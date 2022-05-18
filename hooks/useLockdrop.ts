@@ -159,6 +159,19 @@ export const useLockdrop = (contractAddress?: AccAddress) => {
     );
   }
 
+  // withdraw all "claim" rewards.
+  function createWithdrawFullMessage(duration: number): MsgExecuteContract {
+    const executeMsg = {
+      claim_rewards_and_optionally_unlock: {
+        duration,
+        token_address: 'terra14lpnyzc9z4g3ugr4lhm8s4nle0tq8vcltkhzh7',
+        withdraw_lp_stake: true
+      }
+    };
+
+    return new MsgExecuteContract(userWalletAddr, lockdropAddress, executeMsg);
+  }
+
   // astro/xastro withdraw message
   function createWithdrawMessage(
     duration: number,
@@ -193,7 +206,7 @@ export const useLockdrop = (contractAddress?: AccAddress) => {
     duration: number,
     amount: number
   ): Promise<TxResult> => {
-    const executeMsg = createWithdrawMessage(duration, amount);
+    const executeMsg = createWithdrawFullMessage(duration);
     return post({
       msgs: [executeMsg],
       fee: new Fee(fee.gas, { uusd: fee.amount })

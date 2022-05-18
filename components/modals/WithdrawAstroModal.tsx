@@ -151,6 +151,7 @@ const WithdrawAstroModal: FC<Props> = ({
     (async () => {
       if (userWalletAddr) {
         getTokenPrices();
+        updateWithdrawAmount(amount);
       }
     })();
   }, [userWalletAddr]);
@@ -222,10 +223,8 @@ const WithdrawAstroModal: FC<Props> = ({
             <Box h={1} className="border" />
             <Box p="24px">
               <p className="color-secondary">
-                Select how much xASTRO you want to withdraw from Apollo’s xASTRO
-                Lockdrop. Starting from day 6, you will only be able to withdraw
-                up to 50% of your xASTRO deposits. On day 7, withdrawal
-                allowance will fall linearly from 50% to 0%.
+                You can now withdraw all your xAstro from the Apollo Lockdrop.
+                Apollo rewards have now ended with the unlock.
               </p>
               {config.currentDay === 6 && (
                 <Typography color="gold" sx={{ pt: '10px' }}>
@@ -279,21 +278,18 @@ const WithdrawAstroModal: FC<Props> = ({
                 <NumericalInput
                   value={withdrawAmount}
                   onUserInput={(val: any) => {
-                    updateWithdrawAmount(val);
+                    updateWithdrawAmount(amount);
                   }}
                 />
                 <small className="color-secondary">
-                  {new Intl.NumberFormat('en-US', {
-                    style: 'currency',
-                    currency: 'USD'
-                  }).format(withdrawValue)}
+                  {new Intl.NumberFormat('en-US').format(withdrawValue)} UST
                 </small>
               </Box>
             </Box>
             <Box mt="16px">
               <StyledSlider
                 value={Number(withdrawAmount)}
-                setValue={(val) => updateWithdrawAmount(val)}
+                setValue={(val) => updateWithdrawAmount(amount)}
                 maxValue={amount}
                 maxString="Max"
               />
@@ -315,7 +311,7 @@ const WithdrawAstroModal: FC<Props> = ({
                       <h5 className="color-secondary">WEEKS</h5>
                     </Box>
                   </Box>
-                  <Box textAlign="right">
+                  {/* <Box textAlign="right">
                     <small className="color-secondary">
                       {' '}
                       {new Date(unlocksOn).toLocaleDateString('en-US', {
@@ -325,12 +321,12 @@ const WithdrawAstroModal: FC<Props> = ({
                         timeZone: 'UTC'
                       })}
                     </small>
-                  </Box>
+                  </Box> */}
                 </Box>
               </Grid>
             </Grid>
           </Box>
-          <Grid
+          {/* <Grid
             container
             mt="16px"
             py="12px"
@@ -356,7 +352,7 @@ const WithdrawAstroModal: FC<Props> = ({
                 </small>
               </Box>
             </Grid>
-          </Grid>
+          </Grid> */}
           <Box textAlign="center" mt="16px">
             <Button
               maxWidth={192}
