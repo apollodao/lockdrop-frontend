@@ -26,9 +26,8 @@ const LockdropPageHeader: FC<Props> = ({}) => {
         </Typography>
         <Typography variant="body1" color={white60}>
           The Apollo xAstro Lockdrop is now closed, thank you for all the
-          support. You will be able to claim your Apollo rewards on this page
-          and in the Rewards tab. Once your Lock Period ends, you will be able
-          to claim your apAstro in return for the deposited xAstro.
+          support. You can now withdraw all your xAstro from the Apollo
+          Lockdrop. Apollo rewards have now ended with the unlock.
         </Typography>
       </Grid>
       <Grid item lg={4} md={4} xs={12} sm={12} textAlign="center">
