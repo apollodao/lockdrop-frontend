@@ -228,7 +228,7 @@ const MyLockdropDepositsRow: FC<Props> = ({
               }
             }}
             label="Withdraw"
-            disabled={true}
+            disabled={withdrawal_flag}
             onClick={handleWithdraw}
           />
         )}
