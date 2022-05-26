@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import React, { FC, ReactNode } from 'react';
 import { useWallet, ConnectType } from '@terra-money/wallet-provider';
 import { Box, Text, HStack, Flex, chakra } from '@chakra-ui/react';
 import Modal from 'components/modals/MuiModal';
@@ -11,7 +11,23 @@ type Props = {
 };
 
 const ConnectWalletModal: FC<Props> = ({ isOpen, onClose }) => {
-  const { connect } = useWallet();
+  const { availableConnections, connect } = useWallet();
+  type Button = { label: string; image: ReactNode; onClick: () => void };
+
+  const buttons = ([] as Button[]).concat(
+    availableConnections?.map(
+      ({ type, identifier, name, icon, size }: any) => ({
+        image: <img src={icon} alt="" {...size} />,
+        label: name,
+        onClick: () => connect(type, identifier)
+      })
+    )
+  );
+
+  const handleClick = (onClick: () => void, onClose: () => void) => {
+    onClick();
+    onClose();
+  };
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
@@ -21,26 +37,30 @@ const ConnectWalletModal: FC<Props> = ({ isOpen, onClose }) => {
           justify="center"
           align="center"
           textAlign="center">
-          <chakra.button
-            transition="0.2s all"
-            p="6"
-            borderRadius="xl"
-            color="white"
-            width="100%"
-            mb="4"
-            _hover={{
-              color: 'brand.dark'
-            }}
-            onClick={() => {
-              onClose();
-              connect(ConnectType.EXTENSION);
-            }}>
-            <HStack justify="space-between">
-              <Text>Terra Station Extension</Text>
-              <TerraExtensionIcon />
-            </HStack>
-          </chakra.button>
-          <chakra.button
+          {/* station */}
+          {Object.entries(buttons).map(([key, { label, image, onClick }]) => (
+            <chakra.button
+              transition="0.2s all"
+              p="6"
+              borderRadius="xl"
+              color="white"
+              width="100%"
+              mb="4"
+              _hover={{
+                color: 'brand.dark'
+              }}
+              onClick={() => {
+                handleClick(onClick, onClose);
+              }}>
+              <HStack justify="space-between">
+                <Text>{label}</Text>
+                <Text style={{ maxWidth: 30 }}>{image}</Text>
+              </HStack>
+            </chakra.button>
+          ))}
+
+          {/* wallet connect */}
+          {/* <chakra.button
             transition="0.2s all"
             p="6"
             borderRadius="xl"
@@ -57,7 +77,7 @@ const ConnectWalletModal: FC<Props> = ({ isOpen, onClose }) => {
               <Text>Terra Station Mobile</Text>
               <TerraMobileIcon width="1.5rem" height="1.5rem" />
             </HStack>
-          </chakra.button>
+          </chakra.button> */}
         </Flex>
       </Box>
     </Modal>

@@ -1,4 +1,4 @@
-import React, { FC, ReactNode } from "react";
+import React, { FC, ReactNode } from 'react';
 import {
   Popover,
   PopoverContent,
@@ -7,10 +7,10 @@ import {
   PopoverCloseButton,
   PopoverBody,
   PopoverTrigger,
-  PopoverProps,
-} from "@chakra-ui/react";
+  PopoverProps
+} from '@chakra-ui/react';
 
-import CloseIcon from "components/icons/CloseIcon";
+import CloseIcon from 'components/icons/CloseIcon';
 
 type Props = {
   title?: string;
