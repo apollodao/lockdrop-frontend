@@ -23,7 +23,7 @@ import { useEffect } from 'react';
 export const useLockdrop = (contractAddress?: AccAddress) => {
   let networkName = useRecoilValue(networkNameState);
   if (!networkName || !isSupportedNetwork(networkName)) {
-    networkName = 'mainnet';
+    networkName = 'classic';
   }
 
   const lockdropAddress =

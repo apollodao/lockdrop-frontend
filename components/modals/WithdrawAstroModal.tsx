@@ -42,7 +42,7 @@ const WithdrawAstroModal: FC<Props> = ({
 }) => {
   let networkName: any = useRecoilValue(networkNameState);
   if (!networkName || !isSupportedNetwork(networkName)) {
-    networkName = 'mainnet';
+    networkName = 'classic';
   }
   const lcdClient = useRecoilValue(lcdClientQuery);
   const [withdrawAmount, setWithdrawAmount] = useState(0);
