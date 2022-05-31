@@ -3,11 +3,25 @@ import { NetworkInfo } from '@terra-money/wallet-provider';
 type LockdropNetworkInfo = NetworkInfo & ApolloLocalNetworkConfig;
 
 const networks: Record<string, LockdropNetworkInfo> = {
-  mainnet: {
-    name: 'mainnet',
+  classic: {
+    name: 'classic',
     chainID: 'columbus-5',
     lcd: 'https://lcd.terra.dev',
     apolloLcd: 'https://lcd.terra.dev',
+    mantle: 'https://mantle.terra.dev/',
+    stats: 'https://graph.mirror.finance/graphql',
+    backend: 'https://api.apollo.farm',
+    shuttle: {
+      ethereum: 'terra13yxhrk08qvdf5zdc9ss5mwsg5sf7zva9xrgwgc',
+      bsc: 'terra1g6llg3zed35nd3mh9zx6n64tfw3z67w2c48tn2'
+    },
+    fee: { gasPrice: 0.15, amount: 100000 }
+  },
+  mainnet: {
+    name: 'mainnet',
+    chainID: 'phoenix-1',
+    lcd: 'https://phoenix-lcd.terra.dev',
+    apolloLcd: 'https://phoenix-lcd.terra.dev',
     mantle: 'https://mantle.terra.dev/',
     stats: 'https://graph.mirror.finance/graphql',
     backend: 'https://api.apollo.farm',
@@ -46,6 +60,6 @@ const networks: Record<string, LockdropNetworkInfo> = {
     fee: { gasPrice: 0.15, amount: 100000 }
   }
 };
-export const defaultNetwork = networks.mainnet;
+export const defaultNetwork = networks.classic;
 
 export default networks;

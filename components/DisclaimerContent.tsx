@@ -30,7 +30,7 @@ const DisclaimerContent = () => {
                 drop transactions. As noted below, in the event of security
                 threats, such code is subject to change after launch by action
                 of the Multisig. You should always ensure that you understand
-                the specific smart contracts on Terra mainnet (columbus-5)
+                the specific smart contracts on Terra classic (columbus-5)
                 blockchain system (the “<strong>Terra</strong>”) that are in
                 control of your tokens—the addresses of these smart contracts on
                 Terra can be found through the Astroport changelog{' '}
