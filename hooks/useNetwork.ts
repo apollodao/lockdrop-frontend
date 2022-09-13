@@ -3,14 +3,12 @@ import { FINDER } from 'constants/constants';
 import networks from '../networks';
 
 const useNetwork = () => {
-  const { network: extNetwork } = useWallet();
-
-  const network = networks[extNetwork.name];
+  const network = networks['classic'];
 
   const finder = (address: string, path: string = 'account') =>
-    `${FINDER}/${extNetwork.chainID}/${path}/${address}`;
+    `${FINDER}/${network.chainID}/${path}/${address}`;
 
-  return { ...extNetwork, ...network, finder };
+  return { ...network, finder };
 };
 
 export default useNetwork;

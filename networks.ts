@@ -17,11 +17,11 @@ const networks: Record<string, LockdropNetworkInfo> = {
     },
     fee: { gasPrice: 0.15, amount: 100000 }
   },
-  phoenix: {
-    name: 'phoenix',
-    chainID: 'phoenix-1',
-    lcd: 'https://phoenix-lcd.terra.dev',
-    apolloLcd: 'https://phoenix-lcd.terra.dev',
+  mainnet: {
+    name: 'classic',
+    chainID: 'columbus-5',
+    lcd: 'https://columbus-lcd.terra.dev',
+    apolloLcd: 'https://columbus-lcd.terra.dev',
     mantle: 'https://mantle.terra.dev/',
     stats: 'https://graph.mirror.finance/graphql',
     backend: 'https://api.apollo.farm',

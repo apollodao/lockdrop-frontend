@@ -18,7 +18,8 @@ export const useInitAddress = () => {
 
 export const useInitNetwork = () => {
   const wallet = useWallet();
-  const { name } = wallet.network;
+  // const { name } = wallet.network;
+  const name = 'classic';
 
   const setNetworkName = useSetRecoilState(networkNameState);
   useEffect(() => {
