@@ -32,6 +32,7 @@ const ApolloStageIndicator: FC<Props> = ({ borderColor = darkGrey }) => {
   const [endDate, setEndDate] = useState(new Date());
 
   useEffect(() => {
+    if (!config) return;
     (async () => {
       setStartDate(config.startDate);
       setEndDate(config.endDate);

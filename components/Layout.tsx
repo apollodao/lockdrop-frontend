@@ -64,7 +64,8 @@ const Layout: FC = ({ children }) => {
         }}
       />
       {!isInitializing && (
-        <TerraWebappProvider>
+        <TerraWebappProvider
+          config={{ lcdClientUrl: 'https://columbus-lcd.terra.dev' }}>
           <AstroAppProvider data={whitelist}>
             <RecoilRoot>
               <RecoilInit />
