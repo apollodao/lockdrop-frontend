@@ -43,6 +43,7 @@ const ApolloCountdown: FC<Props> = ({}) => {
   const [title, setTitle] = useState('');
 
   useEffect(() => {
+    if (!config) return;
     (async () => {
       switch (config.currentStage) {
         case 'pre':

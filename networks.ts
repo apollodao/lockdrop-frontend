@@ -6,8 +6,8 @@ const networks: Record<string, LockdropNetworkInfo> = {
   classic: {
     name: 'classic',
     chainID: 'columbus-5',
-    lcd: 'https://lcd.terra.dev',
-    apolloLcd: 'https://lcd.terra.dev',
+    lcd: 'https://columbus-lcd.terra.dev',
+    apolloLcd: 'https://columbus-lcd.terra.dev',
     mantle: 'https://mantle.terra.dev/',
     stats: 'https://graph.mirror.finance/graphql',
     backend: 'https://api.apollo.farm',
@@ -18,10 +18,10 @@ const networks: Record<string, LockdropNetworkInfo> = {
     fee: { gasPrice: 0.15, amount: 100000 }
   },
   mainnet: {
-    name: 'mainnet',
-    chainID: 'phoenix-1',
-    lcd: 'https://phoenix-lcd.terra.dev',
-    apolloLcd: 'https://phoenix-lcd.terra.dev',
+    name: 'classic',
+    chainID: 'columbus-5',
+    lcd: 'https://columbus-lcd.terra.dev',
+    apolloLcd: 'https://columbus-lcd.terra.dev',
     mantle: 'https://mantle.terra.dev/',
     stats: 'https://graph.mirror.finance/graphql',
     backend: 'https://api.apollo.farm',

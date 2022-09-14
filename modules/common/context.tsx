@@ -5,15 +5,15 @@ import React, {
   Context,
   createContext,
   useContext,
-  Consumer,
-} from "react";
-import { useWallet } from "@terra-money/wallet-provider";
-import dayjs from "dayjs";
+  Consumer
+} from 'react';
+import { useWallet } from '@terra-money/wallet-provider';
+import dayjs from 'dayjs';
 
-import { useConfig as useLockdropConfig } from "modules/lockdrop";
-import { useConfig as useAuctionConfig } from "modules/auction";
+import { useConfig as useLockdropConfig } from 'modules/lockdrop';
+import { useConfig as useAuctionConfig } from 'modules/auction';
 
-import { PairResponse, Tokens, Data } from "./types";
+import { PairResponse, Tokens, Data } from './types';
 
 type Astro = {
   pairs: PairResponse[] | null;
@@ -34,7 +34,7 @@ export const AstroAppContext: Context<Astro> = createContext<Astro>({
   phase1StartDate: null,
   phase1EndDate: null,
   phase2StartDate: null,
-  phase2EndDate: null,
+  phase2EndDate: null
 });
 
 type Props = {
@@ -44,7 +44,7 @@ type Props = {
 
 export const AstroAppProvider: FC<Props> = ({ children, data }) => {
   const {
-    network: { name },
+    network: { name }
   } = useWallet();
   const lockdropConfig = useLockdropConfig();
   const auctionConfig = useAuctionConfig();
@@ -73,8 +73,8 @@ export const AstroAppProvider: FC<Props> = ({ children, data }) => {
     }
 
     return phase1StartDate
-      .add(lockdropConfig.deposit_window, "second")
-      .add(lockdropConfig.withdrawal_window, "second");
+      .add(lockdropConfig.deposit_window, 'second')
+      .add(lockdropConfig.withdrawal_window, 'second');
   }, [lockdropConfig, phase1StartDate]);
 
   const phase2StartDate = useMemo(() => {
@@ -93,8 +93,8 @@ export const AstroAppProvider: FC<Props> = ({ children, data }) => {
     }
 
     return phase2StartDate
-      .add(auctionConfig.deposit_window, "second")
-      .add(auctionConfig.withdrawal_window, "second");
+      .add(auctionConfig.deposit_window, 'second')
+      .add(auctionConfig.withdrawal_window, 'second');
   }, [auctionConfig, phase2StartDate]);
 
   return (
@@ -107,9 +107,8 @@ export const AstroAppProvider: FC<Props> = ({ children, data }) => {
         phase1StartDate,
         phase1EndDate,
         phase2StartDate,
-        phase2EndDate,
-      }}
-    >
+        phase2EndDate
+      }}>
       {children}
     </AstroAppContext.Provider>
   );
